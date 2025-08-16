@@ -21,6 +21,9 @@ namespace LinearProgrammingSolver
             Integer,    // int
             Binary      // bin
         }
+
+        
+
         public static LPModel ParseInputFile(string filePath)
         {
             if(!File.Exists(filePath))//check if file does not exists then ,then give exception
