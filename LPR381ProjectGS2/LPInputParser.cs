@@ -121,6 +121,48 @@ namespace LinearProgrammingSolver
             if (model.NumberOfVariables == 0)
                 throw new ArgumentException("No variables found in objective function");
         }
+        private static Constraint ParseConstraint(string line, int expectedVariables)
+        {
+            var vars = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
 
-    }
+            // Expected format: +/- number +/- number ... <= >= = RHS
+            // So we need: (expectedVariables * 2) + relation + RHS = (expectedVariables * 2) + 2 vars
+            int expectedvars = (expectedVariables * 2) + 2;
+            if (vars.Length != expectedvars)
+                throw new ArgumentException($"Invalid constraint format. Expected {expectedvars} vars, got {vars.Length}: {line}");
+
+            var constraint = new Constraint();
+
+            // Parse operator-coefficient pairs
+            for (int i = 0; i < expectedVariables * 2; i += 2)
+            {
+                string operatorVar = vars[i];
+                string numberVar = vars[i + 1];
+
+                // Validate operator
+                if (operatorVar != "+" && operatorVar != "-")
+                    throw new ArgumentException($"Invalid operator in constraint: {operatorVar}. Must be '+' or '-'");
+
+                // Parse coefficient
+                if (double.TryParse(numberVar, out double coefficient))
+                {
+                    // Apply sign from operator
+                    if (operatorVar == "-")
+                        coefficient = -coefficient;
+
+                    constraint.Coefficients.Add(coefficient);
+                }
+                else
+                {
+                    throw new ArgumentException($"Invalid constraint coefficient: {numberVar}");
+                }
+            }
+
+            // Parse constraint type (at position expectedVariables * 2)
+            string relationToken = vars[expectedVariables * 2];
+            switch (relationToken)
+            {
+                case "<=":
+
+            }
 }
