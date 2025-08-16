@@ -2,7 +2,7 @@
 
 public class LPModel
 {
-	public LPModel()
-	{
-	}
+    public bool IsMaximization { get; set; }
 }
+
+
