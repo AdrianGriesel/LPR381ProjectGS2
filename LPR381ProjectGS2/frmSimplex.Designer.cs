@@ -37,12 +37,16 @@
             this.txtIterationDetails = new System.Windows.Forms.TextBox();
             this.btnNextIteration = new System.Windows.Forms.Button();
             this.txtVariableValues = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTableau)).BeginInit();
             this.SuspendLayout();
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(381, 59);
+            this.btnBrowse.Location = new System.Drawing.Point(399, 59);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(75, 23);
             this.btnBrowse.TabIndex = 1;
@@ -52,24 +56,24 @@
             // 
             // txtSignRestrictions
             // 
-            this.txtSignRestrictions.Location = new System.Drawing.Point(76, 154);
+            this.txtSignRestrictions.Location = new System.Drawing.Point(114, 154);
             this.txtSignRestrictions.Name = "txtSignRestrictions";
-            this.txtSignRestrictions.Size = new System.Drawing.Size(278, 22);
+            this.txtSignRestrictions.Size = new System.Drawing.Size(255, 22);
             this.txtSignRestrictions.TabIndex = 2;
             // 
             // txtConstraints
             // 
-            this.txtConstraints.Location = new System.Drawing.Point(76, 88);
+            this.txtConstraints.Location = new System.Drawing.Point(114, 87);
             this.txtConstraints.Multiline = true;
             this.txtConstraints.Name = "txtConstraints";
-            this.txtConstraints.Size = new System.Drawing.Size(350, 60);
+            this.txtConstraints.Size = new System.Drawing.Size(327, 60);
             this.txtConstraints.TabIndex = 3;
             // 
             // txtObjective
             // 
-            this.txtObjective.Location = new System.Drawing.Point(76, 60);
+            this.txtObjective.Location = new System.Drawing.Point(114, 59);
             this.txtObjective.Name = "txtObjective";
-            this.txtObjective.Size = new System.Drawing.Size(299, 22);
+            this.txtObjective.Size = new System.Drawing.Size(279, 22);
             this.txtObjective.TabIndex = 4;
             // 
             // dgvTableau
@@ -111,17 +115,59 @@
             // 
             // txtVariableValues
             // 
-            this.txtVariableValues.Location = new System.Drawing.Point(784, 263);
+            this.txtVariableValues.Location = new System.Drawing.Point(784, 281);
             this.txtVariableValues.Multiline = true;
             this.txtVariableValues.Name = "txtVariableValues";
             this.txtVariableValues.Size = new System.Drawing.Size(271, 150);
             this.txtVariableValues.TabIndex = 9;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(10, 59);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(83, 16);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "LP Objective";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 88);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(73, 16);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "Constraints";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(10, 157);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(107, 16);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Sign Restrictions";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(785, 253);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(104, 16);
+            this.label4.TabIndex = 13;
+            this.label4.Text = "Optimal Sulotion";
             // 
             // frmSimplex
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1110, 688);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.txtVariableValues);
             this.Controls.Add(this.btnNextIteration);
             this.Controls.Add(this.txtIterationDetails);
@@ -150,5 +196,9 @@
         private System.Windows.Forms.TextBox txtIterationDetails;
         private System.Windows.Forms.Button btnNextIteration;
         private System.Windows.Forms.TextBox txtVariableValues;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
     }
 }

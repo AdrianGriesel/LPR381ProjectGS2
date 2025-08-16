@@ -161,7 +161,7 @@ namespace LPR381ProjectGS2
 
         
 
-        private void UpdateTableauGrid()
+        private void UpdateTableauGrid()//heavy work in progress you dont have to do it this was jsut for me to test if it good enough to diplay in tablua format
         {
             int rows = tableau.GetLength(0);
             int cols = tableau.GetLength(1);
@@ -192,6 +192,14 @@ namespace LPR381ProjectGS2
             }
         }
 
-        
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

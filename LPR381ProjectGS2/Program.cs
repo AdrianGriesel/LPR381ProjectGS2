@@ -16,7 +16,7 @@ namespace LPR381ProjectGS2
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmSimplex());
+            Application.Run(new Main_Form());
         }
     }
 }
