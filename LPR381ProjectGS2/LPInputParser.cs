@@ -163,6 +163,26 @@ namespace LinearProgrammingSolver
             switch (relationToken)
             {
                 case "<=":
-
+                    constraint.Type = ConstraintType.LessOrEqual;
+                    break;
+                case ">=":
+                    constraint.Type = ConstraintType.GreaterOrEqual;
+                    break;
+                case "=":
+                    constraint.Type = ConstraintType.Equal;
+                    break;
+                default:
+                    throw new ArgumentException($"Invalid constraint relation: {relationToken}");
+            } // Parse RHS (at position expectedVariables * 2 + 1)
+            if (double.TryParse(tokens[expectedVariables * 2 + 1], out double rhs))
+            {
+                constraint.RightHandSide = rhs;
             }
-}
+            else
+            {
+                throw new ArgumentException($"Invalid right-hand side value: {tokens[expectedVariables * 2 + 1]}");
+            }
+
+            return constraint;
+        }
+    }
