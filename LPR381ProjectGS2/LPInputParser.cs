@@ -185,4 +185,88 @@ namespace LinearProgrammingSolver
 
             return constraint;
         }
+        private static void ParseSignRestrictions(string line, LPModel model)
+        {
+            var tokens = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+
+            if (tokens.Length != model.NumberOfVariables)
+                throw new ArgumentException($"Number of sign restrictions ({tokens.Length}) must match number of variables ({model.NumberOfVariables})");
+
+            foreach (string token in tokens)
+            {
+                switch (token.ToLower())
+                {
+                    case "+":
+                        model.SignRestrictions.Add(VariableType.Positive);
+                        break;
+                    case "-":
+                        model.SignRestrictions.Add(VariableType.Negative);
+                        break;
+                    case "urs":
+                        model.SignRestrictions.Add(VariableType.Unrestricted);
+                        break;
+                    case "int":
+                        model.SignRestrictions.Add(VariableType.Integer);
+                        break;
+                    case "bin":
+                        model.SignRestrictions.Add(VariableType.Binary);
+                        break;
+                    default:
+                        throw new ArgumentException($"Invalid sign restriction: {token}");
+                }
+            }
+        }
+        // Utility method to display parsed model (for testing/debugging)
+        public static void DisplayModel(LPModel model)
+        {
+            Console.WriteLine($"Problem Type: {(model.IsMaximization ? "Maximize" : "Minimize")}");
+
+            Console.Write("Objective Function: ");
+            for (int i = 0; i < model.ObjectiveCoefficients.Count; i++)
+            {
+                Console.Write($"{model.ObjectiveCoefficients[i]:+0.###;-0.###}x{i + 1}");
+                if (i < model.ObjectiveCoefficients.Count - 1)
+                    Console.Write(" ");
+            }
+            Console.WriteLine();
+
+            Console.WriteLine("Constraints:");
+            for (int i = 0; i < model.Constraints.Count; i++)
+            {
+                var constraint = model.Constraints[i];
+                Console.Write($"  ");
+                for (int j = 0; j < constraint.Coefficients.Count; j++)
+                {
+                    Console.Write($"{constraint.Coefficients[j]:+0.###;-0.###}x{j + 1}");
+                    if (j < constraint.Coefficients.Count - 1)
+                        Console.Write(" ");
+                }
+
+                string relationSymbol = constraint.Type switch
+                {
+                    ConstraintType.LessOrEqual => "<=",
+                    ConstraintType.GreaterOrEqual => ">=",
+                    ConstraintType.Equal => "=",
+                    _ => "?"
+                };
+
+                Console.WriteLine($" {relationSymbol} {constraint.RightHandSide}");
+            }
+
+            Console.WriteLine("Sign Restrictions:");
+            for (int i = 0; i < model.SignRestrictions.Count; i++)
+            {
+                string restriction = model.SignRestrictions[i] switch
+                {
+                    VariableType.Positive => "+",
+                    VariableType.Negative => "-",
+                    VariableType.Unrestricted => "urs",
+                    VariableType.Integer => "int",
+                    VariableType.Binary => "bin",
+                    _ => "?"
+                };
+                Console.Write($"x{i + 1}: {restriction}  ");
+            }
+            Console.WriteLine();
+        }
     }

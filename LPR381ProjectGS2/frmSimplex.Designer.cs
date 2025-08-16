@@ -1,6 +1,6 @@
 ﻿namespace LPR381ProjectGS2
 {
-    partial class Form1
+    partial class frmSimplex
     {
         /// <summary>
         /// Required designer variable.
