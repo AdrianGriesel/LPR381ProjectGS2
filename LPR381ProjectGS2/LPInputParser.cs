@@ -45,6 +45,32 @@ namespace LinearProgrammingSolver
             string[] lines = File.ReadAllLines(filePath);//reads all line int an array
             if (lines.Length < 2)//to small give error
                 throw new ArgumentException("Input file must contain at least objective function and sign restrictions");
+
+            var model = new LPModel();//creates a model
+            try
+            {
+                // Parse objective function (first line)
+                ParseObjectiveFunction(lines[0], model);
+
+                // Parse constraints (all lines except first and last)
+                for (int i = 1; i < lines.Length - 1; i++)
+                {
+                    if (!string.IsNullOrWhiteSpace(lines[i]))
+                    {
+                        var constraint = ParseConstraint(lines[i], model.NumberOfVariables);
+                        model.Constraints.Add(constraint);
+                    }
+                }
+
+                // Parse sign restrictions (last line)
+                ParseSignRestrictions(lines[lines.Length - 1], model);
+
+                return model;
+            }
+            catch (Exception ex)//error handling
+            {
+                throw new ArgumentException($"Error parsing input file: {ex.Message}", ex);
+            }
         }
 
 
