@@ -16,6 +16,13 @@ namespace LPR381ProjectGS2
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            string filePath = "knapsack_input.txt";
+            var model = LinearProgrammingSolver.LPInputParser.ParseInputFile(filePath);
+
+            var knapSolver = LPR381ProjectGS2.KnapSackSolver.FromLPModel(model);
+            knapSolver.Solve();
+            knapSolver.PrintSolution(); // <-- console output
+
             Application.Run(new Main_Form());
         }
     }

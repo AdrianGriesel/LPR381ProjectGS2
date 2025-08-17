@@ -52,6 +52,7 @@
     <Compile Include="frmSimplex.Designer.cs">
       <DependentUpon>frmSimplex.cs</DependentUpon>
     </Compile>
+    <Compile Include="KnapSackSolver.cs" />
     <Compile Include="LPInputParser.cs" />
     <Compile Include="Main Form.cs">
       <SubType>Form</SubType>
