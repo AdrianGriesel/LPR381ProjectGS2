@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
@@ -101,7 +102,20 @@ namespace LPR381ProjectGS2
                 try
                 {
                     var model = LPInputParser.ParseInputFile(ofd.FileName);
-                    DisplayModel(model);
+                    if (model.SignRestrictions.TrueForAll(t => t == LPInputParser.VariableType.Binary))
+                    {
+                        var knapSolver = KnapSackSolver.FromLPModel(model);
+                        knapSolver.Solve();
+                        var (value, items) = knapSolver.GetSolution();
+                        txtVariableValues.Text = $"Best Value = {value:F3}\r\n" +
+                            $"Itmes Taken = {string.Join(", ", items)}";
+
+                        DisplayKnapsackIterations(knapSolver);
+                    }
+                    else
+                    {
+                        DisplayModel(model);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -200,6 +214,43 @@ namespace LPR381ProjectGS2
         private void label3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void DisplayKnapsackSolution(LPInputParser.LPModel model, KnapSackSolver knapSolver)
+        {
+            dgvTableau.Rows.Clear();
+            dgvTableau.Columns.Clear();
+
+            dgvTableau.Columns.Add("Item", "Item");
+            dgvTableau.Columns.Add("Weight", "Weight");
+            dgvTableau.Columns.Add("Value", "Value");
+
+            var (value, items) = knapSolver.GetSolution();
+
+            foreach (var item in items)
+            {
+                var weight = model.Constraints[0].Coefficients[item - 1];
+                var val = model.ObjectiveCoefficients[item - 1];
+                dgvTableau.Rows.Add($"x{item}", weight, val);
+
+                dgvTableau.Rows.Add("Total",
+                    items.Sum(i => model.Constraints[0].Coefficients[i - 1]),value);
+            }
+        }
+
+        private void DisplayKnapsackIterations(KnapSackSolver knapSolver)
+        {
+            dgvTableau.Rows.Clear();
+            dgvTableau.Columns.Clear();
+
+            dgvTableau.Columns.Add("Step", "Step");
+            dgvTableau.Columns.Add("Details", "Branch and Bound Iteration");
+
+            int step = 1;
+            foreach (var entry in knapSolver.IterationLog) 
+            {
+                dgvTableau.Rows.Add(step++, entry);
+            }
         }
     }
 }

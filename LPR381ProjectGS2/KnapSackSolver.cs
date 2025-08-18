@@ -10,6 +10,9 @@ namespace LPR381ProjectGS2
 {
     public class KnapSackSolver 
     {
+        private List<string> iterationLog = new List<string>();
+
+        public IReadOnlyList<string> IterationLog => iterationLog;
         public static KnapSackSolver FromLPModel(LPInputParser.LPModel model)
         {
             if (model.Constraints.Count == 0)
@@ -80,6 +83,12 @@ namespace LPR381ProjectGS2
             {
                 Node current = queue.Dequeue();
 
+                iterationLog.Add($"Level {current.Level}, "+
+                    $"Value = {current.Value}, "+
+                    $"Weight={current.Level}, "+
+                    $"Bound={current.Bound}, "+
+                    $"Items={{{string.Join(", ", current.ItemsTaken)}}}");
+
                 if (current.Bound <= bestValue || current.Level == items.Count - 1)
                     continue;
                 int nextLevel = current.Level + 1;
@@ -91,7 +100,8 @@ namespace LPR381ProjectGS2
                     ItemsTaken = new List<int>(current.ItemsTaken)
                 };
                 include.ItemsTaken.Add(items[nextLevel].Index);
-
+                iterationLog.Add($"➡ Include x{items[nextLevel].Index}: " +
+                 $"Value={include.Value}, Weight={include.Weight}, Bound={include.Bound:F2}");
                 if (include.Weight <= capacity && include.Value > bestValue)
                 {
                     bestValue = include.Value;
@@ -108,6 +118,9 @@ namespace LPR381ProjectGS2
                     Weight = current.Weight,
                     ItemsTaken = new List<int>(current.ItemsTaken)
                 };
+
+                iterationLog.Add($"✖ Exclude x{items[nextLevel].Index}: " +
+                 $"Value={exclude.Value}, Weight={exclude.Weight}, Bound={exclude.Bound:F2}");
                 exclude.Bound = CalculateBound(exclude);
                 if (exclude.Bound > bestValue)
 
