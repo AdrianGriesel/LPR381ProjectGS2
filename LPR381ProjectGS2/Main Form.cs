@@ -21,7 +21,14 @@ namespace LPR381ProjectGS2
         {
             frmSimplex frmSimplex = new frmSimplex();
             frmSimplex.ShowDialog();
-            
+
+        }
+
+        private void btnPrimalSolver_Click(object sender, EventArgs e)
+        {
+            frmPrimal frmPrimal = new frmPrimal();
+            frmPrimal.ShowDialog();
+
         }
     }
 }
