@@ -192,7 +192,7 @@ namespace LinearProgrammingSolver
             }
         }
 
-    
+     
         private static bool IsSignRestrictionLine(string line)
         {
             var vars = line.Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);

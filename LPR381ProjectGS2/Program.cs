@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static LinearProgrammingSolver.LPInputParser;
 
 namespace LPR381ProjectGS2
 {
@@ -17,7 +18,7 @@ namespace LPR381ProjectGS2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             string filePath = "knapsack_input.txt";
-            var model = LinearProgrammingSolver.LPInputParser.ParseInputFile(filePath);
+            var model = ParseInputFile(filePath);
 
             var knapSolver = LPR381ProjectGS2.KnapSackSolver.FromLPModel(model);
             knapSolver.Solve();
