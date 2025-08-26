@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LPR381ProjectGS2
+namespace LPR381ProjectGS2.Domain.Models
 {
     public sealed class TableauSnapshot
     {

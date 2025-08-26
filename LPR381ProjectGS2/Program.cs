@@ -15,16 +15,16 @@ namespace LPR381ProjectGS2
         [STAThread]
         static void Main()
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+            System.Windows.Forms.Application.EnableVisualStyles();
+            System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
             string filePath = "knapsack_input.txt";
             var model = ParseInputFile(filePath);
 
-            var knapSolver = LPR381ProjectGS2.KnapSackSolver.FromLPModel(model);
+            var knapSolver = LPR381ProjectGS2.Domain.Algorithms.KnapSackSolver.FromLPModel(model);
             knapSolver.Solve();
             knapSolver.PrintSolution(); // <-- console output
 
-            Application.Run(new Main_Form());
+            System.Windows.Forms.Application.Run(new Main_Form());
         }
     }
 }

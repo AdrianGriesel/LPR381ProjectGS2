@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LPR381ProjectGS2
+namespace LPR381ProjectGS2.Domain.Algorithms
 {
     public class KnapSackSolver 
     {

@@ -46,11 +46,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application\SensitivityWriter.cs" />
+    <Compile Include="Domain\Analysis\BuildDual.cs" />
+    <Compile Include="Domain\Analysis\DualBuilder.cs" />
+    <Compile Include="Domain\Analysis\SensitivityAnalyzer.cs" />
+    <Compile Include="Domain\Analysis\SensitivityReport.cs" />
     <Compile Include="frmPrimal.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmPrimal.Designer.cs">
       <DependentUpon>frmPrimal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmSensitivity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmSensitivity.Designer.cs">
+      <DependentUpon>frmSensitivity.cs</DependentUpon>
     </Compile>
     <Compile Include="frmSimplex.cs">
       <SubType>Form</SubType>
@@ -58,22 +69,25 @@
     <Compile Include="frmSimplex.Designer.cs">
       <DependentUpon>frmSimplex.cs</DependentUpon>
     </Compile>
-    <Compile Include="KnapSackSolver.cs" />
-    <Compile Include="OutputWriter.cs" />
-    <Compile Include="SimplexResult.cs" />
-    <Compile Include="LPInputParser.cs" />
+    <Compile Include="Domain\Algorithms\KnapSackSolver.cs" />
+    <Compile Include="Application\OutputWriter.cs" />
+    <Compile Include="Domain\Models\SimplexResult.cs" />
+    <Compile Include="Application\Parsing\LPInputParser.cs" />
     <Compile Include="Main Form.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main Form.Designer.cs">
       <DependentUpon>Main Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="PrimalSimplexSolver.cs" />
+    <Compile Include="Domain\Algorithms\PrimalSimplexSolver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TableauSnapshot.cs" />
+    <Compile Include="Domain\Models\TableauSnapshot.cs" />
     <EmbeddedResource Include="frmPrimal.resx">
       <DependentUpon>frmPrimal.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSensitivity.resx">
+      <DependentUpon>frmSensitivity.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmSimplex.resx">
       <DependentUpon>frmSimplex.cs</DependentUpon>
@@ -103,5 +117,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

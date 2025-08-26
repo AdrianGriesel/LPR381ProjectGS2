@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using static LinearProgrammingSolver.LPInputParser;
 
-namespace LPR381ProjectGS2
+namespace LPR381ProjectGS2.Domain.Algorithms
 {
     public class PrimalSimplexSolver
     {
