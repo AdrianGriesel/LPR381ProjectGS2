@@ -102,20 +102,7 @@ namespace LPR381ProjectGS2
                 try
                 {
                     var model = LPInputParser.ParseInputFile(ofd.FileName);
-                    if (model.SignRestrictions.TrueForAll(t => t == LPInputParser.VariableType.Binary))
-                    {
-                        var knapSolver = KnapSackSolver.FromLPModel(model);
-                        knapSolver.Solve();
-                        var (value, items) = knapSolver.GetSolution();
-                        txtVariableValues.Text = $"Best Value = {value:F3}\r\n" +
-                            $"Itmes Taken = {string.Join(", ", items)}";
-
-                        DisplayKnapsackIterations(knapSolver);
-                    }
-                    else
-                    {
-                        DisplayModel(model);
-                    }
+                    DisplayModel(model);   // always just display the LP in frmSimplex
                 }
                 catch (Exception ex)
                 {
@@ -123,6 +110,7 @@ namespace LPR381ProjectGS2
                 }
             }
         }
+
 
         private void InitializeSimplex(LPInputParser.LPModel model)
         {

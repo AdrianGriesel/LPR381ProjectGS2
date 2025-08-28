@@ -30,14 +30,15 @@
         {
             this.btnSimplex = new System.Windows.Forms.Button();
             this.btnPrimalSolver = new System.Windows.Forms.Button();
+            this.btnKnapsackBnb = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSimplex
             // 
-            this.btnSimplex.Location = new System.Drawing.Point(10, 11);
-            this.btnSimplex.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSimplex.Location = new System.Drawing.Point(13, 14);
+            this.btnSimplex.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.btnSimplex.Name = "btnSimplex";
-            this.btnSimplex.Size = new System.Drawing.Size(155, 34);
+            this.btnSimplex.Size = new System.Drawing.Size(207, 42);
             this.btnSimplex.TabIndex = 0;
             this.btnSimplex.Text = "Go To Simplex Solver";
             this.btnSimplex.UseVisualStyleBackColor = true;
@@ -45,22 +46,35 @@
             // 
             // btnPrimalSolver
             // 
-            this.btnPrimalSolver.Location = new System.Drawing.Point(10, 51);
+            this.btnPrimalSolver.Location = new System.Drawing.Point(13, 63);
+            this.btnPrimalSolver.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.btnPrimalSolver.Name = "btnPrimalSolver";
-            this.btnPrimalSolver.Size = new System.Drawing.Size(155, 38);
+            this.btnPrimalSolver.Size = new System.Drawing.Size(207, 47);
             this.btnPrimalSolver.TabIndex = 1;
             this.btnPrimalSolver.Text = "Go To Primal Simplex Solver";
             this.btnPrimalSolver.UseVisualStyleBackColor = true;
             this.btnPrimalSolver.Click += new System.EventHandler(this.btnPrimalSolver_Click);
             // 
+            // btnKnapsackBnb
+            // 
+            this.btnKnapsackBnb.Location = new System.Drawing.Point(13, 118);
+            this.btnKnapsackBnb.Margin = new System.Windows.Forms.Padding(4);
+            this.btnKnapsackBnb.Name = "btnKnapsackBnb";
+            this.btnKnapsackBnb.Size = new System.Drawing.Size(207, 57);
+            this.btnKnapsackBnb.TabIndex = 2;
+            this.btnKnapsackBnb.Text = "Go To Knapsack and Branch and Bound";
+            this.btnKnapsackBnb.UseVisualStyleBackColor = true;
+            this.btnKnapsackBnb.Click += new System.EventHandler(this.btnKnapsackBnb_Click);
+            // 
             // Main_Form
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(600, 366);
+            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.btnKnapsackBnb);
             this.Controls.Add(this.btnPrimalSolver);
             this.Controls.Add(this.btnSimplex);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.Name = "Main_Form";
             this.Text = "Main_Form";
             this.ResumeLayout(false);
@@ -71,5 +85,6 @@
 
         private System.Windows.Forms.Button btnSimplex;
         private System.Windows.Forms.Button btnPrimalSolver;
+        private System.Windows.Forms.Button btnKnapsackBnb;
     }
 }

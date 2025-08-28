@@ -73,6 +73,44 @@ namespace LPR381ProjectGS2
         // Rounds to 3 decimal places and ensures 3 decimal digits are always shown
         private static string Rounder(double value)
             => Math.Round(value, 3).ToString("0.000", CultureInfo.InvariantCulture);
+
+        // === Knapsack (Branch & Bound) output ===
+        public static void WriteKnapsackRun(
+            string outputPath,
+            string title,
+            double[] values,
+            double[] weights,
+            double capacity,
+            IEnumerable<string> iterationLog,
+            double bestValue,
+            System.Collections.BitArray bestItems)
+        {
+            var inv = CultureInfo.InvariantCulture;
+            var sb = new StringBuilder();
+
+            sb.AppendLine($"=== {title} ===");
+            sb.AppendLine($"Capacity: {capacity.ToString("F3", inv)}");
+            sb.AppendLine("Items:");
+            for (int i = 0; i < values.Length; i++)
+                sb.AppendLine($"  i={i + 1}  val={values[i].ToString("F3", inv)}  wt={weights[i].ToString("F3", inv)}");
+
+            sb.AppendLine();
+            sb.AppendLine("Iterations:");
+            foreach (var line in iterationLog) sb.AppendLine(line);
+
+            // Build list of chosen items (1-based indexing)
+            var chosen = new List<int>();
+            for (int i = 0; i < bestItems.Length; i++)
+                if (bestItems[i]) chosen.Add(i + 1);
+
+            sb.AppendLine();
+            sb.AppendLine("=== RESULT ===");
+            sb.AppendLine($"BestValue = {bestValue.ToString("F3", inv)}");
+            sb.AppendLine($"ItemsTaken = [{string.Join(", ", chosen)}]");
+
+            File.WriteAllText(outputPath, sb.ToString());
+        }
+
     }
 
 }
