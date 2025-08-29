@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BranchAndBoundSolver.cs" />
     <Compile Include="frmBranchAndBound.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -90,6 +91,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TableauSnapshot.cs" />
+    <EmbeddedResource Include="frmBranchAndBound.resx">
+      <DependentUpon>frmBranchAndBound.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FrmKnapsackBnb.resx">
       <DependentUpon>FrmKnapsackBnb.cs</DependentUpon>
     </EmbeddedResource>
