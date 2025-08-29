@@ -46,6 +46,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="frmBranchAndBound.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmBranchAndBound.Designer.cs">
+      <DependentUpon>frmBranchAndBound.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmCuttingPlane.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCuttingPlane.Designer.cs">
+      <DependentUpon>frmCuttingPlane.cs</DependentUpon>
+    </Compile>
     <Compile Include="FrmKnapsackBnb.cs">
       <SubType>Form</SubType>
     </Compile>

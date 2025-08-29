@@ -70,5 +70,19 @@ namespace LPR381ProjectGS2
                 }
             }
         }
+
+        private void btnBranchAndBound_Click(object sender, EventArgs e)
+        {
+            //open branch and boudn form
+            frmBranchAndBound frmBranchAndBound = new frmBranchAndBound();
+            frmBranchAndBound.ShowDialog();
+        }
+
+        private void btnCuttingPlane_Click(object sender, EventArgs e)
+        {
+            //open cutting plane form
+            frmCuttingPlane frmCuttingPlane = new frmCuttingPlane();
+            frmCuttingPlane.ShowDialog();
+        }
     }
 }
