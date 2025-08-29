@@ -72,27 +72,30 @@ namespace LPR381ProjectGS2.Domain.Algorithms
         public void Solve()
         {
             items.Sort((a, b) => b.Ratio.CompareTo(a.Ratio));
-            Queue<Node> queue = new Queue<Node>();
+            var queue = new Queue<Node>();
 
-
-            Node root = new Node { Level = -1, Value = 0, Weight = 0 };
+            var root = new Node { Level = -1, Value = 0, Weight = 0 };
             root.Bound = CalculateBound(root);
             queue.Enqueue(root);
 
-            while(queue.Count > 0)
+            while (queue.Count > 0)
             {
-                Node current = queue.Dequeue();
+                var current = queue.Dequeue();
 
-                iterationLog.Add($"Level {current.Level}, "+
-                    $"Value = {current.Value}, "+
-                    $"Weight={current.Level}, "+
-                    $"Bound={current.Bound}, "+
-                    $"Items={{{string.Join(", ", current.ItemsTaken)}}}");
+                iterationLog.Add(
+                    $"Level {current.Level}, " +
+                    $"Value={current.Value:F3}, " +
+                    $"Weight={current.Weight:F3}, " +   // FIXED (was Level)
+                    $"Bound={current.Bound:F3}, " +
+                    $"Items={{ {string.Join(", ", current.ItemsTaken)} }}");
 
                 if (current.Bound <= bestValue || current.Level == items.Count - 1)
                     continue;
+
                 int nextLevel = current.Level + 1;
-                Node include = new Node
+
+                // --- include child ---
+                var include = new Node
                 {
                     Level = nextLevel,
                     Value = current.Value + items[nextLevel].Value,
@@ -100,33 +103,36 @@ namespace LPR381ProjectGS2.Domain.Algorithms
                     ItemsTaken = new List<int>(current.ItemsTaken)
                 };
                 include.ItemsTaken.Add(items[nextLevel].Index);
+
+                include.Bound = CalculateBound(include); // compute BEFORE logging
                 iterationLog.Add($"➡ Include x{items[nextLevel].Index}: " +
-                 $"Value={include.Value}, Weight={include.Weight}, Bound={include.Bound:F2}");
+                                 $"Value={include.Value:F3}, Weight={include.Weight:F3}, Bound={include.Bound:F3}");
+
                 if (include.Weight <= capacity && include.Value > bestValue)
                 {
                     bestValue = include.Value;
                     bestItems = include.ItemsTaken;
                 }
-
-                include.Bound = CalculateBound(include);
                 if (include.Bound > bestValue)
                     queue.Enqueue(include);
-                Node exclude = new Node
+
+                // --- exclude child ---
+                var exclude = new Node
                 {
                     Level = nextLevel,
                     Value = current.Value,
                     Weight = current.Weight,
                     ItemsTaken = new List<int>(current.ItemsTaken)
                 };
-
+                exclude.Bound = CalculateBound(exclude); // compute BEFORE logging
                 iterationLog.Add($"✖ Exclude x{items[nextLevel].Index}: " +
-                 $"Value={exclude.Value}, Weight={exclude.Weight}, Bound={exclude.Bound:F2}");
-                exclude.Bound = CalculateBound(exclude);
-                if (exclude.Bound > bestValue)
+                                 $"Value={exclude.Value:F3}, Weight={exclude.Weight:F3}, Bound={exclude.Bound:F3}");
 
+                if (exclude.Bound > bestValue)
                     queue.Enqueue(exclude);
             }
         }
+
 
         private double CalculateBound(Node node)
         {
@@ -154,7 +160,7 @@ namespace LPR381ProjectGS2.Domain.Algorithms
 
         public void PrintSolution()
         {
-            Console.WriteLine("Best Vallue: " + bestValue);
+            Console.WriteLine("Best Value: " + bestValue.ToString("F3"));
             Console.WriteLine("Items Taken: " + string.Join(", ", bestItems));
         }
 

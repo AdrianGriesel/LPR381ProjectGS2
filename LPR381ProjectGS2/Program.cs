@@ -25,6 +25,10 @@ namespace LPR381ProjectGS2
             knapSolver.PrintSolution(); // <-- console output
 
             System.Windows.Forms.Application.Run(new Main_Form());
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            
+            Application.Run(new Main_Form());
         }
     }
 }
