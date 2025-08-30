@@ -7,52 +7,43 @@ namespace LPR381ProjectGS2.Domain.Analysis
 {
     internal class DualBuilder
     {
-        public static LPModel BuildDualForSolver(LPModel primal)
+        // Builds a solver-compatible dual from a primal LP model
+        // Assumes primal: max, all <= constraints, all x >= 0
+        public static LPModel BuildDual(LPModel primal)
         {
             if (primal == null) return null;
             if (!primal.IsMaximization) return null;
             if (primal.Constraints.Exists(c => c.Type != ConstraintType.LessOrEqual)) return null;
             if (primal.SignRestrictions.Exists(v => v != VariableType.Positive)) return null;
 
-            int m = primal.Constraints.Count;      // primal rows -> dual variables
+            int m = primal.Constraints.Count;      // primal rows -> dual vars
             int n = primal.NumberOfVariables;      // primal cols -> dual constraints
 
             var dual = new LPModel
             {
-                IsMaximization = true,             // for solver, must be max
+                IsMaximization = true,             // solver expects MAX
                 NumberOfVariables = m
             };
 
-            // dual objective = primal RHS
+            // Objective: -b^T y (negate RHS of primal)
             for (int i = 0; i < m; i++)
-                dual.ObjectiveCoefficients.Add(primal.Constraints[i].RightHandSide);
+                dual.ObjectiveCoefficients.Add(-primal.Constraints[i].RightHandSide);
 
-            // dual constraints = transpose of primal A
+            // Constraints: (-A^T) y <= -c
             for (int j = 0; j < n; j++)
             {
-                var c = new Constraint();
+                var row = new Constraint();
+
                 for (int i = 0; i < m; i++)
-                    c.Coefficients.Add(primal.Constraints[i].Coefficients[j]);
+                    row.Coefficients.Add(-primal.Constraints[i].Coefficients[j]);
 
-                // originally >= because x_j >= 0 in primal
-                c.Type = ConstraintType.GreaterOrEqual;
+                row.Type = ConstraintType.LessOrEqual;
+                row.RightHandSide = -primal.ObjectiveCoefficients[j];
 
-                // rhs = primal objective coefficient
-                c.RightHandSide = primal.ObjectiveCoefficients[j];
-
-                // convert >= to <= for solver
-                if (c.Type == ConstraintType.GreaterOrEqual)
-                {
-                    for (int k = 0; k < c.Coefficients.Count; k++)
-                        c.Coefficients[k] *= -1;
-                    c.RightHandSide *= -1;
-                    c.Type = ConstraintType.LessOrEqual;
-                }
-
-                dual.Constraints.Add(c);
+                dual.Constraints.Add(row);
             }
 
-            // dual variables >= 0
+            // y >= 0 because primal constraints are <=
             for (int i = 0; i < m; i++)
                 dual.SignRestrictions.Add(VariableType.Positive);
 
@@ -60,4 +51,3 @@ namespace LPR381ProjectGS2.Domain.Analysis
         }
     }
 }
-

@@ -84,8 +84,8 @@ namespace LPR381ProjectGS2.Presentation
                 lblDualityCheck.Text = "strong duality: _";
 
                 btnSolvePrimal.Enabled = true;
-                btnBuildDual.Enabled = false;
-                btnSolveDual.Enabled = false;
+                btnBuildDual.Enabled = true;
+                btnSolveDual.Enabled = true;
                 btnAnalyze.Enabled = false;
                 btnExport.Enabled = false;
 
@@ -142,7 +142,7 @@ namespace LPR381ProjectGS2.Presentation
 
         private void btnBuildDual_Click(object sender, EventArgs e)
         {
-            _dualModel = DualBuilder.BuildDualForSolver(_primalModel);
+            _dualModel = DualBuilder.BuildDual(_primalModel);
 
             if (_dualModel == null)
             {
@@ -161,7 +161,7 @@ namespace LPR381ProjectGS2.Presentation
             if (_primalResult == null) return;
 
             // build dual ready for solver
-            _dualModel = DualBuilder.BuildDualForSolver(_primalModel);
+            _dualModel = DualBuilder.BuildDual(_primalModel);
 
             var solver = new PrimalSimplexSolver();
             _dualResult = solver.Solve(_dualModel);
