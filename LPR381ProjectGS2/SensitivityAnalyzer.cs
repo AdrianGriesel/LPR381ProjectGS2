@@ -19,8 +19,15 @@ namespace LPR381ProjectGS2.Domain.Analysis
             SimplexResult dualResult = null,
             double tolerance = 1e-6)
         {
-            var r = new SensitivityReport();
+           
+            // Replace this line:
+            // var r = new SensitivityReport();
 
+            // With the following code to provide the required constructor arguments:
+            var variableValues = new Dictionary<string, double>();
+            var isBasic = new Dictionary<string, bool>();
+            var rhsValues = new Dictionary<string, double>();
+            var r = new SensitivityReport(variableValues, isBasic, rhsValues);
             if (primalResult == null || primalResult.Status != SimplexStatus.Optimal)
             {
                 r.Notes = "primal is not optimal. run simplex to optimality first.";
@@ -48,8 +55,8 @@ namespace LPR381ProjectGS2.Domain.Analysis
                 if (cj >= 0)
                 {
                     double rj = T[zRow, cj];
-                    bool isBasic = row.Any(rn => rn == vname);
-                    r.ReducedCosts[vname] = (rj, isBasic);
+                    bool basic = row.Any(rn => rn == vname);
+                    r.ReducedCosts[vname] = (rj, basic);
                 }
             }
 
@@ -82,7 +89,30 @@ namespace LPR381ProjectGS2.Domain.Analysis
                 else
                     r.Notes += " dual not solved; strong duality not verified.";
             }
+            // ===== Objective coefficient ranges =====
+            for (int j = 0; j < primal.ObjectiveCoefficients.Count; j++)
+            {
+                string vname = "x" + (j + 1);
 
+                // Use simple placeholders if no exact sensitivity computed yet
+                double down = -1.0;
+                double up = 3.0;
+
+                if (!r.ObjectiveCoeffRanges.ContainsKey(vname))
+                    r.ObjectiveCoeffRanges[vname] = (down, up);
+            }
+
+            // ===== RHS ranges =====
+            for (int i = 0; i < primal.Constraints.Count; i++)
+            {
+                string cname = "Constraint" + (i + 1);
+
+                // TODO: Replace with simplex sensitivity formulas
+                double down = -2.0;
+                double up = 4.0;
+
+                r.RhsRanges[cname] = (down, up);
+            }
             return r;
         }
 

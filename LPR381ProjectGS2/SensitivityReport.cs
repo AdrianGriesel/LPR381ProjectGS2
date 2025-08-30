@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace LPR381ProjectGS2.Domain.Analysis
 {
+    public class SensitivityRange
+    {
+        public double Min { get; set; }
+        public double Max { get; set; }
+    }
     public class SensitivityReport
     {
         public double PrimalObjective { get; set; }
@@ -21,7 +26,18 @@ namespace LPR381ProjectGS2.Domain.Analysis
         public bool StrongDualityHolds { get; set; }
 
         public string Notes { get; set; } = "";
+        private Dictionary<string, double> _variableValues;
+        private Dictionary<string, bool> _isBasic;
 
+        private Dictionary<string, double> _rhsValues;
+        public SensitivityReport(Dictionary<string, double> variableValues,
+                                 Dictionary<string, bool> isBasic,
+                                 Dictionary<string, double> rhsValues)
+        {
+            _variableValues = variableValues;
+            _isBasic = isBasic;
+            _rhsValues = rhsValues;
+        }
         public SensitivityRange GetVariableRange(string varName)
         {
             if (!_variableValues.ContainsKey(varName)) return new SensitivityRange { Min = 0, Max = 0 };

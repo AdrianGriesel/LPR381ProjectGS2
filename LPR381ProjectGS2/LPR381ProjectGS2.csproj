@@ -88,6 +88,7 @@
     </Compile>
     <Compile Include="KnapSackSolver.cs" />
     <Compile Include="LPInputParser.cs" />
+    <Compile Include="LPStandardizer.cs" />
     <Compile Include="Main Form.cs">
       <SubType>Form</SubType>
     </Compile>

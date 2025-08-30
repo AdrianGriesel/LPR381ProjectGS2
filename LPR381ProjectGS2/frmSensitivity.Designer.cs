@@ -36,7 +36,6 @@
             this.btnAnalyze = new System.Windows.Forms.Button();
             this.btnExport = new System.Windows.Forms.Button();
             this.lblStatus = new System.Windows.Forms.Label();
-            this.prog = new System.Windows.Forms.ProgressBar();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.Overview = new System.Windows.Forms.TabPage();
             this.grpDual = new System.Windows.Forms.GroupBox();
@@ -57,15 +56,19 @@
             this.yvalue = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.units = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Ranges = new System.Windows.Forms.TabPage();
-            this.lblTolerance = new System.Windows.Forms.Label();
+            this.lblNewValue = new System.Windows.Forms.Label();
             this.grpRhsRanges = new System.Windows.Forms.GroupBox();
+            this.btnApplyRhsChange = new System.Windows.Forms.Button();
             this.gridRhsRanges = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.allowableIncrease = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.bi = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.allowableDecrease = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.numTolerance = new System.Windows.Forms.NumericUpDown();
+            this.numNewValue = new System.Windows.Forms.NumericUpDown();
             this.grpObjRanges = new System.Windows.Forms.GroupBox();
+            this.btnAddConstraint = new System.Windows.Forms.Button();
+            this.btnAddActivity = new System.Windows.Forms.Button();
+            this.btnApplyVarChange = new System.Windows.Forms.Button();
             this.gridObjRanges = new System.Windows.Forms.DataGridView();
             this.variableRange = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.cj = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -75,10 +78,7 @@
             this.btnCopyReport = new System.Windows.Forms.Button();
             this.txtReportPreview = new System.Windows.Forms.RichTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnApplyVarChange = new System.Windows.Forms.Button();
-            this.btnApplyRhsChange = new System.Windows.Forms.Button();
-            this.btnAddActivity = new System.Windows.Forms.Button();
-            this.btnAddConstraint = new System.Windows.Forms.Button();
+            this.lstDualIters = new System.Windows.Forms.ListBox();
             this.tabMain.SuspendLayout();
             this.Overview.SuspendLayout();
             this.grpDual.SuspendLayout();
@@ -91,7 +91,7 @@
             this.Ranges.SuspendLayout();
             this.grpRhsRanges.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridRhsRanges)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numTolerance)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numNewValue)).BeginInit();
             this.grpObjRanges.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridObjRanges)).BeginInit();
             this.Report.SuspendLayout();
@@ -168,18 +168,11 @@
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(57, 341);
+            this.lblStatus.Location = new System.Drawing.Point(36, 316);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(40, 13);
             this.lblStatus.TabIndex = 6;
             this.lblStatus.Text = "Status:";
-            // 
-            // prog
-            // 
-            this.prog.Location = new System.Drawing.Point(60, 357);
-            this.prog.Name = "prog";
-            this.prog.Size = new System.Drawing.Size(275, 23);
-            this.prog.TabIndex = 7;
             // 
             // tabMain
             // 
@@ -197,6 +190,7 @@
             // 
             // Overview
             // 
+            this.Overview.Controls.Add(this.lblStatus);
             this.Overview.Controls.Add(this.grpDual);
             this.Overview.Controls.Add(this.grpPrimal);
             this.Overview.Location = new System.Drawing.Point(4, 25);
@@ -209,6 +203,7 @@
             // 
             // grpDual
             // 
+            this.grpDual.Controls.Add(this.lstDualIters);
             this.grpDual.Controls.Add(this.lblDualObj);
             this.grpDual.Controls.Add(this.gridDualTableau);
             this.grpDual.Controls.Add(this.lblDualityCheck);
@@ -222,7 +217,7 @@
             // lblDualObj
             // 
             this.lblDualObj.AutoSize = true;
-            this.lblDualObj.Location = new System.Drawing.Point(20, 47);
+            this.lblDualObj.Location = new System.Drawing.Point(6, 19);
             this.lblDualObj.Name = "lblDualObj";
             this.lblDualObj.Size = new System.Drawing.Size(66, 13);
             this.lblDualObj.TabIndex = 6;
@@ -234,7 +229,7 @@
             this.gridDualTableau.AllowUserToDeleteRows = false;
             this.gridDualTableau.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.gridDualTableau.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridDualTableau.Location = new System.Drawing.Point(23, 84);
+            this.gridDualTableau.Location = new System.Drawing.Point(6, 125);
             this.gridDualTableau.Name = "gridDualTableau";
             this.gridDualTableau.ReadOnly = true;
             this.gridDualTableau.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
@@ -244,7 +239,7 @@
             // lblDualityCheck
             // 
             this.lblDualityCheck.AutoSize = true;
-            this.lblDualityCheck.Location = new System.Drawing.Point(20, 60);
+            this.lblDualityCheck.Location = new System.Drawing.Point(6, 32);
             this.lblDualityCheck.Name = "lblDualityCheck";
             this.lblDualityCheck.Size = new System.Drawing.Size(196, 13);
             this.lblDualityCheck.TabIndex = 4;
@@ -278,6 +273,7 @@
             this.lstPrimalIters.Name = "lstPrimalIters";
             this.lstPrimalIters.Size = new System.Drawing.Size(120, 95);
             this.lstPrimalIters.TabIndex = 2;
+            this.lstPrimalIters.SelectedIndexChanged += new System.EventHandler(this.lstPrimalIters_SelectedIndexChanged);
             // 
             // gridPrimalTableau
             // 
@@ -382,9 +378,9 @@
             // 
             // Ranges
             // 
-            this.Ranges.Controls.Add(this.lblTolerance);
+            this.Ranges.Controls.Add(this.lblNewValue);
             this.Ranges.Controls.Add(this.grpRhsRanges);
-            this.Ranges.Controls.Add(this.numTolerance);
+            this.Ranges.Controls.Add(this.numNewValue);
             this.Ranges.Controls.Add(this.grpObjRanges);
             this.Ranges.Location = new System.Drawing.Point(4, 25);
             this.Ranges.Name = "Ranges";
@@ -393,14 +389,14 @@
             this.Ranges.Text = "Allowable Ranges";
             this.Ranges.UseVisualStyleBackColor = true;
             // 
-            // lblTolerance
+            // lblNewValue
             // 
-            this.lblTolerance.AutoSize = true;
-            this.lblTolerance.Location = new System.Drawing.Point(381, 299);
-            this.lblTolerance.Name = "lblTolerance";
-            this.lblTolerance.Size = new System.Drawing.Size(84, 13);
-            this.lblTolerance.TabIndex = 2;
-            this.lblTolerance.Text = "Tolerance (eps):";
+            this.lblNewValue.AutoSize = true;
+            this.lblNewValue.Location = new System.Drawing.Point(367, 299);
+            this.lblNewValue.Name = "lblNewValue";
+            this.lblNewValue.Size = new System.Drawing.Size(70, 13);
+            this.lblNewValue.TabIndex = 2;
+            this.lblNewValue.Text = "New Variable";
             // 
             // grpRhsRanges
             // 
@@ -412,6 +408,16 @@
             this.grpRhsRanges.TabIndex = 1;
             this.grpRhsRanges.TabStop = false;
             this.grpRhsRanges.Text = "RHS Ranges";
+            // 
+            // btnApplyRhsChange
+            // 
+            this.btnApplyRhsChange.Location = new System.Drawing.Point(15, 227);
+            this.btnApplyRhsChange.Name = "btnApplyRhsChange";
+            this.btnApplyRhsChange.Size = new System.Drawing.Size(110, 29);
+            this.btnApplyRhsChange.TabIndex = 4;
+            this.btnApplyRhsChange.Text = "Apply RHS Change";
+            this.btnApplyRhsChange.UseVisualStyleBackColor = true;
+            this.btnApplyRhsChange.Click += new System.EventHandler(this.btnApplyRhsChange_Click);
             // 
             // gridRhsRanges
             // 
@@ -459,14 +465,14 @@
             this.allowableDecrease.ReadOnly = true;
             this.allowableDecrease.Width = 115;
             // 
-            // numTolerance
+            // numNewValue
             // 
-            this.numTolerance.Cursor = System.Windows.Forms.Cursors.Default;
-            this.numTolerance.Location = new System.Drawing.Point(471, 297);
-            this.numTolerance.Name = "numTolerance";
-            this.numTolerance.Size = new System.Drawing.Size(120, 20);
-            this.numTolerance.TabIndex = 1;
-            this.numTolerance.Value = new decimal(new int[] {
+            this.numNewValue.Cursor = System.Windows.Forms.Cursors.Default;
+            this.numNewValue.Location = new System.Drawing.Point(443, 297);
+            this.numNewValue.Name = "numNewValue";
+            this.numNewValue.Size = new System.Drawing.Size(120, 20);
+            this.numNewValue.TabIndex = 1;
+            this.numNewValue.Value = new decimal(new int[] {
             1,
             0,
             0,
@@ -484,6 +490,36 @@
             this.grpObjRanges.TabIndex = 0;
             this.grpObjRanges.TabStop = false;
             this.grpObjRanges.Text = "Objective Coefficient Ranges";
+            // 
+            // btnAddConstraint
+            // 
+            this.btnAddConstraint.Location = new System.Drawing.Point(353, 227);
+            this.btnAddConstraint.Name = "btnAddConstraint";
+            this.btnAddConstraint.Size = new System.Drawing.Size(103, 29);
+            this.btnAddConstraint.TabIndex = 6;
+            this.btnAddConstraint.Text = "Add Constraint";
+            this.btnAddConstraint.UseVisualStyleBackColor = true;
+            this.btnAddConstraint.Click += new System.EventHandler(this.btnAddConstraint_Click);
+            // 
+            // btnAddActivity
+            // 
+            this.btnAddActivity.Location = new System.Drawing.Point(222, 227);
+            this.btnAddActivity.Name = "btnAddActivity";
+            this.btnAddActivity.Size = new System.Drawing.Size(103, 29);
+            this.btnAddActivity.TabIndex = 5;
+            this.btnAddActivity.Text = "Add Activity";
+            this.btnAddActivity.UseVisualStyleBackColor = true;
+            this.btnAddActivity.Click += new System.EventHandler(this.btnAddActivity_Click);
+            // 
+            // btnApplyVarChange
+            // 
+            this.btnApplyVarChange.Location = new System.Drawing.Point(93, 227);
+            this.btnApplyVarChange.Name = "btnApplyVarChange";
+            this.btnApplyVarChange.Size = new System.Drawing.Size(103, 29);
+            this.btnApplyVarChange.TabIndex = 3;
+            this.btnApplyVarChange.Text = "Variable Change";
+            this.btnApplyVarChange.UseVisualStyleBackColor = true;
+            this.btnApplyVarChange.Click += new System.EventHandler(this.btnApplyVarChange_Click);
             // 
             // gridObjRanges
             // 
@@ -551,6 +587,7 @@
             this.btnCopyReport.TabIndex = 1;
             this.btnCopyReport.Text = "Copy Report";
             this.btnCopyReport.UseVisualStyleBackColor = true;
+            this.btnCopyReport.Click += new System.EventHandler(this.btnCopyReport_Click);
             // 
             // txtReportPreview
             // 
@@ -568,49 +605,20 @@
             this.toolTip1.ReshowDelay = 100;
             this.toolTip1.ShowAlways = true;
             // 
-            // btnApplyVarChange
+            // lstDualIters
             // 
-            this.btnApplyVarChange.Location = new System.Drawing.Point(93, 227);
-            this.btnApplyVarChange.Name = "btnApplyVarChange";
-            this.btnApplyVarChange.Size = new System.Drawing.Size(103, 29);
-            this.btnApplyVarChange.TabIndex = 3;
-            this.btnApplyVarChange.Text = "Variable Change";
-            this.btnApplyVarChange.UseVisualStyleBackColor = true;
-            // 
-            // btnApplyRhsChange
-            // 
-            this.btnApplyRhsChange.Location = new System.Drawing.Point(15, 227);
-            this.btnApplyRhsChange.Name = "btnApplyRhsChange";
-            this.btnApplyRhsChange.Size = new System.Drawing.Size(110, 29);
-            this.btnApplyRhsChange.TabIndex = 4;
-            this.btnApplyRhsChange.Text = "Apply RHS Change";
-            this.btnApplyRhsChange.UseVisualStyleBackColor = true;
-            // 
-            // btnAddActivity
-            // 
-            this.btnAddActivity.Location = new System.Drawing.Point(222, 227);
-            this.btnAddActivity.Name = "btnAddActivity";
-            this.btnAddActivity.Size = new System.Drawing.Size(103, 29);
-            this.btnAddActivity.TabIndex = 5;
-            this.btnAddActivity.Text = "Add Activity";
-            this.btnAddActivity.UseVisualStyleBackColor = true;
-            // 
-            // btnAddConstraint
-            // 
-            this.btnAddConstraint.Location = new System.Drawing.Point(353, 227);
-            this.btnAddConstraint.Name = "btnAddConstraint";
-            this.btnAddConstraint.Size = new System.Drawing.Size(103, 29);
-            this.btnAddConstraint.TabIndex = 6;
-            this.btnAddConstraint.Text = "Add Constraint";
-            this.btnAddConstraint.UseVisualStyleBackColor = true;
+            this.lstDualIters.FormattingEnabled = true;
+            this.lstDualIters.Location = new System.Drawing.Point(208, 19);
+            this.lstDualIters.Name = "lstDualIters";
+            this.lstDualIters.Size = new System.Drawing.Size(92, 95);
+            this.lstDualIters.TabIndex = 7;
+            this.lstDualIters.SelectedIndexChanged += new System.EventHandler(this.lstDualIters_SelectedIndexChanged);
             // 
             // frmSensitivity
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(979, 470);
-            this.Controls.Add(this.prog);
-            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.tabMain);
             this.Controls.Add(this.btnExport);
             this.Controls.Add(this.btnAnalyze);
@@ -623,6 +631,7 @@
             this.Load += new System.EventHandler(this.frmSensitivity_Load);
             this.tabMain.ResumeLayout(false);
             this.Overview.ResumeLayout(false);
+            this.Overview.PerformLayout();
             this.grpDual.ResumeLayout(false);
             this.grpDual.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDualTableau)).EndInit();
@@ -636,12 +645,11 @@
             this.Ranges.PerformLayout();
             this.grpRhsRanges.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridRhsRanges)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numTolerance)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numNewValue)).EndInit();
             this.grpObjRanges.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridObjRanges)).EndInit();
             this.Report.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -654,7 +662,6 @@
         private System.Windows.Forms.Button btnAnalyze;
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.Label lblStatus;
-        private System.Windows.Forms.ProgressBar prog;
         private System.Windows.Forms.TabControl tabMain;
         private System.Windows.Forms.TabPage Overview;
         private System.Windows.Forms.TabPage ShadowPricesReducedCosts;
@@ -688,8 +695,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn allowableIncrease;
         private System.Windows.Forms.DataGridViewTextBoxColumn bi;
         private System.Windows.Forms.DataGridViewTextBoxColumn allowableDecrease;
-        private System.Windows.Forms.Label lblTolerance;
-        private System.Windows.Forms.NumericUpDown numTolerance;
+        private System.Windows.Forms.Label lblNewValue;
+        private System.Windows.Forms.NumericUpDown numNewValue;
         private System.Windows.Forms.RichTextBox txtReportPreview;
         private System.Windows.Forms.Button btnCopyReport;
         private System.Windows.Forms.ToolTip toolTip1;
@@ -697,5 +704,6 @@
         private System.Windows.Forms.Button btnApplyVarChange;
         private System.Windows.Forms.Button btnAddConstraint;
         private System.Windows.Forms.Button btnAddActivity;
+        private System.Windows.Forms.ListBox lstDualIters;
     }
 }

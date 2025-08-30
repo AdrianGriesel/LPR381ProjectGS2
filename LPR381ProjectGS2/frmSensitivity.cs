@@ -1,21 +1,24 @@
-﻿using LPR381ProjectGS2.Domain.Algorithms;
+﻿
+using LinearProgrammingSolver;
+using LPR381ProjectGS2.Domain.Algorithms;
 using LPR381ProjectGS2.Domain.Analysis;
 using LPR381ProjectGS2.Domain.Models;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using static LinearProgrammingSolver.LPInputParser;
+using SimplexStatus = LPR381ProjectGS2.Domain.Models.SimplexStatus;
 
 namespace LPR381ProjectGS2.Presentation
 {
     public partial class frmSensitivity : Form
     {
-        private LPModel _primalModel;
-        private SimplexResult _primalResult;
+        private LinearProgrammingSolver.LPInputParser.LPModel _primalModel;
+        private Domain.Models.SimplexResult _primalResult;
 
-        private LPModel _dualModel;
-        private SimplexResult _dualResult;
+        private LinearProgrammingSolver.LPInputParser.LPModel _dualModel;
+        private Domain.Models.SimplexResult _dualResult;
 
         private SensitivityReport _report;
 
@@ -32,6 +35,9 @@ namespace LPR381ProjectGS2.Presentation
             SetGridDefaults(gridReducedCosts);
             SetGridDefaults(gridObjRanges);
             SetGridDefaults(gridRhsRanges);
+
+            lstDualIters.SelectedIndexChanged += lstDualIters_SelectedIndexChanged;
+            lstPrimalIters.SelectedIndexChanged += lstPrimalIters_SelectedIndexChanged;
 
             btnSolvePrimal.Enabled = false;
             btnBuildDual.Enabled = false;
@@ -56,7 +62,7 @@ namespace LPR381ProjectGS2.Presentation
             {
                 if (ofd.ShowDialog(this) != DialogResult.OK) return;
 
-                _primalModel = ParseInputFile(ofd.FileName);
+                _primalModel = LPInputParser.ParseInputFile(ofd.FileName);
 
                 _primalResult = null;
                 _dualModel = null;
@@ -81,6 +87,9 @@ namespace LPR381ProjectGS2.Presentation
                 btnSolveDual.Enabled = false;
                 btnAnalyze.Enabled = false;
                 btnExport.Enabled = false;
+
+                BuildObjRangesGrid();
+                BuildRhsRangesGrid();
 
                 lblStatus.Text = "model loaded. click solve primal.";
             }
@@ -121,6 +130,13 @@ namespace LPR381ProjectGS2.Presentation
             lblStatus.Text = $"primal status: {_primalResult.Status}";
 
             btnBuildDual.Enabled = _primalResult.Status == SimplexStatus.Optimal;
+            btnAnalyze.Enabled = _primalResult.Status == SimplexStatus.Optimal;
+            btnExport.Enabled = true;
+
+            // compute initial sensitivity report
+            var analyzer = new SensitivityAnalyzer();
+            _report = analyzer.Analyze(_primalModel, _primalResult, _dualModel, _dualResult, (double)numNewValue.Value);
+            UpdateAfterChange();
         }
 
         private void btnBuildDual_Click(object sender, EventArgs e)
@@ -143,84 +159,175 @@ namespace LPR381ProjectGS2.Presentation
         {
             if (_dualModel == null) return;
 
+            // Ensure the dual model is in a solver-compatible form
+            var dualForSolver = LPStandardizer.ConvertToMaxForm(_dualModel); // convert to max <= x>=0
             var solver = new PrimalSimplexSolver();
-            _dualResult = solver.Solve(_dualModel);
+            _dualResult = solver.Solve(dualForSolver);
 
-            if (_dualResult.Iterations.Any())
-                FillGridWithSnapshot(gridDualTableau, _dualResult.Iterations.Last());
+            lstDualIters.Items.Clear();
 
+            if (_dualResult.Iterations == null || !_dualResult.Iterations.Any())
+            {
+                MessageBox.Show("Dual solver did not produce any iterations. Check the dual LP form.",
+                                "Solver Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                ClearGrid(gridDualTableau);
+                return;
+            }
+
+            // Populate the dual iteration list
+            for (int i = 0; i < _dualResult.Iterations.Count; i++)
+            {
+                var s = _dualResult.Iterations[i];
+                string label = $"iteration {i + 1}";
+                if (s.EnteringColumn.HasValue && s.LeavingRow.HasValue)
+                    label += $" (enter {s.ColumnLabels[s.EnteringColumn.Value]}, leave {s.RowLabels[s.LeavingRow.Value]})";
+                lstDualIters.Items.Add(label);
+            }
+
+            // Show last iteration in the grid
+            lstDualIters.SelectedIndex = _dualResult.Iterations.Count - 1;
+            FillGridWithSnapshot(gridDualTableau, _dualResult.Iterations.Last());
+
+            // Compute dual objective from primal for display
             double dualTrue = ComputeDualObjectiveFromPrimal();
             lblDualObj.Text = $"w* (dual) = {dualTrue:0.000}";
 
-            double tol = (double)numTolerance.Value;
+            double tol = (double)numNewValue.Value;
             bool strong = Math.Abs(dualTrue - _primalResult.ObjectiveValue) <= tol;
             lblDualityCheck.Text = $"strong duality: {(strong ? "passed" : "failed")} (|z* - w*| ≤ {tol})";
 
             lblStatus.Text = "dual solved and duality checked.";
         }
 
+
         private void btnAnalyze_Click(object sender, EventArgs e)
         {
+            if (_primalResult == null) return;
+
             var analyzer = new SensitivityAnalyzer();
-            _report = analyzer.Analyze(_primalModel, _primalResult, _dualModel, _dualResult, (double)numTolerance.Value);
+            _report = analyzer.Analyze(_primalModel, _primalResult, _dualModel, _dualResult, (double)numNewValue.Value);
 
-            BuildShadowPricesGrid();
-            BuildReducedCostsGrid();
-            BuildReportPreview();
-
+            UpdateAfterChange();
             lblStatus.Text = "analysis complete.";
         }
 
-        // ===== Sensitivity Actions =====
+     
 
-        private void gridObjRanges_SelectionChanged(object sender, EventArgs e)
+        
+
+        // ===== Apply Changes =====
+
+        private void ApplyVariableChange(string varName, double newValue)
         {
-            string varName = GetSelectedVariableFromGrid(gridObjRanges);
-            if (string.IsNullOrEmpty(varName)) return;
+            int idx = -1;
+            for (int i = 0; i < _primalModel.ObjectiveCoefficients.Count; i++)
+            {
+                if ($"x{i + 1}" == varName)
+                {
+                    idx = i;
+                    break;
+                }
+            }
+            if (idx < 0) return;
 
-            var range = _report.GetVariableRange(varName);
-            lblStatus.Text = $"Variable {varName} range: {range.Min:0.000} → {range.Max:0.000}";
+            _primalModel.ObjectiveCoefficients[idx] = newValue;
+
+            var solver = new PrimalSimplexSolver();
+            _primalResult = solver.Solve(_primalModel);
+            if (_dualModel != null)
+                _dualResult = solver.Solve(_dualModel);
+
+            RecomputeSensitivityReport(); // recompute report and update grids
         }
 
-        private void btnApplyVarChange_Click(object sender, EventArgs e)
+        private void ApplyRhsChange(string constrName, double newRhs)
         {
-            string varName = GetSelectedVariableFromGrid(gridObjRanges);
-            double newValue = GetNewValueFromInput();
-            // TODO: Apply change in model / recalc
-            lblStatus.Text = $"Non-basic variable {varName} changed to {newValue}.";
+            if (!constrName.StartsWith("Constraint")) return;
+            if (!int.TryParse(constrName.Replace("Constraint", ""), out int idx)) return;
+            if (idx < 0 || idx >= _primalModel.Constraints.Count) return;
+
+            _primalModel.Constraints[idx].RightHandSide = newRhs;
+
+            var solver = new PrimalSimplexSolver();
+            _primalResult = solver.Solve(_primalModel);
+            if (_dualModel != null)
+                _dualResult = solver.Solve(_dualModel);
+
+            RecomputeSensitivityReport(); // recompute report and update grids
         }
 
-        private void gridRhsRanges_SelectionChanged(object sender, EventArgs e)
+        private void AddNewActivity()
         {
-            string constrName = GetSelectedConstraintFromGrid(gridRhsRanges);
-            if (string.IsNullOrEmpty(constrName)) return;
+            int n = _primalModel.ObjectiveCoefficients.Count + 1;
+            string newVarName = "x" + n;
 
-            var range = _report.GetRhsRange(constrName);
-            lblStatus.Text = $"Constraint {constrName} RHS range: {range.Min:0.000} → {range.Max:0.000}";
+            // Add new variable with 0 coefficient
+            _primalModel.ObjectiveCoefficients.Add(0.0);
+
+            // Add 0 coefficients to all existing constraints
+            foreach (var c in _primalModel.Constraints)
+                c.Coefficients.Add(0.0);
+
+            // Solve the updated model
+            var solver = new PrimalSimplexSolver();
+            _primalResult = solver.Solve(_primalModel);
+            if (_dualModel != null)
+                _dualResult = solver.Solve(_dualModel);
+
+            // Recompute the sensitivity report
+            RecomputeSensitivityReport();
+
+            // Force the grids to include the new variable
+            UpdateAfterChange();
+
+            lblStatus.Text = $"Added new activity {newVarName}. Solution updated.";
+        }  
+
+        private void AddNewConstraint()
+        {
+            int n = _primalModel.Constraints.Count + 1;
+            var newConstr = new LinearProgrammingSolver.LPInputParser.Constraint
+            {
+                Coefficients = new List<double>(new double[_primalModel.ObjectiveCoefficients.Count]),
+                RightHandSide = 0.0,
+                Type = LinearProgrammingSolver.LPInputParser.ConstraintType.LessOrEqual
+            };
+            _primalModel.Constraints.Add(newConstr);
+
+            var solver = new PrimalSimplexSolver();
+            _primalResult = solver.Solve(_primalModel);
+
+            if (_dualModel != null)
+                _dualResult = solver.Solve(_dualModel);
+
+            UpdateAfterChange();
+            lblStatus.Text = $"Added new constraint c{n}. Solution updated.";
         }
 
-        private void btnApplyRhsChange_Click(object sender, EventArgs e)
+        private void UpdateAfterChange()
         {
-            string constrName = GetSelectedConstraintFromGrid(gridRhsRanges);
-            double newRhs = GetNewValueFromInput();
-            // TODO: Apply change in model / recalc
-            lblStatus.Text = $"Constraint {constrName} RHS changed to {newRhs}.";
-        }
+            ClearGrid(gridShadowPrices);
+            ClearGrid(gridReducedCosts);
+            ClearGrid(gridObjRanges);
+            ClearGrid(gridRhsRanges);
 
-        private void btnAddActivity_Click(object sender, EventArgs e)
-        {
-            // TODO: Implement new activity addition
-            lblStatus.Text = "Added new activity (placeholder). Recompute solution.";
-        }
-
-        private void btnAddConstraint_Click(object sender, EventArgs e)
-        {
-            // TODO: Implement new constraint addition
-            lblStatus.Text = "Added new constraint (placeholder). Recompute solution.";
+            BuildShadowPricesGrid();
+            BuildReducedCostsGrid();
+            BuildObjRangesGrid();
+            BuildRhsRangesGrid();
+            BuildReportPreview();
         }
 
         // ===== Helpers =====
+        private void RecomputeSensitivityReport()
+        {
+            if (_primalResult == null) return;
 
+            var analyzer = new SensitivityAnalyzer();
+            _report = analyzer.Analyze(_primalModel, _primalResult, _dualModel, _dualResult, (double)numNewValue.Value);
+
+            UpdateAfterChange();
+        }
         private void BuildShadowPricesGrid()
         {
             gridShadowPrices.Columns.Clear();
@@ -255,8 +362,48 @@ namespace LPR381ProjectGS2.Presentation
             }
         }
 
+        private void BuildObjRangesGrid()
+        {
+            gridObjRanges.Columns.Clear();
+            gridObjRanges.Rows.Clear();
+            gridObjRanges.Columns.Add("Variable", "Variable");
+            gridObjRanges.Columns.Add("Down", "Allowable Down");
+            gridObjRanges.Columns.Add("Up", "Allowable Up");
+
+            if (_report == null) return;
+
+            foreach (var kv in _report.ObjectiveCoeffRanges)
+            {
+                int r = gridObjRanges.Rows.Add();
+                gridObjRanges.Rows[r].Cells[0].Value = kv.Key;
+                gridObjRanges.Rows[r].Cells[1].Value = kv.Value.down?.ToString("0.000") ?? "∞";
+                gridObjRanges.Rows[r].Cells[2].Value = kv.Value.up?.ToString("0.000") ?? "∞";
+            }
+        }
+
+        private void BuildRhsRangesGrid()
+        {
+            gridRhsRanges.Columns.Clear();
+            gridRhsRanges.Rows.Clear();
+            gridRhsRanges.Columns.Add("Constraint", "Constraint");
+            gridRhsRanges.Columns.Add("Down", "Allowable Down");
+            gridRhsRanges.Columns.Add("Up", "Allowable Up");
+
+            if (_report == null) return;
+
+            foreach (var kv in _report.RhsRanges)
+            {
+                int r = gridRhsRanges.Rows.Add();
+                gridRhsRanges.Rows[r].Cells[0].Value = kv.Key;
+                gridRhsRanges.Rows[r].Cells[1].Value = kv.Value.down?.ToString("0.000") ?? "∞";
+                gridRhsRanges.Rows[r].Cells[2].Value = kv.Value.up?.ToString("0.000") ?? "∞";
+            }
+        }
+
         private void BuildReportPreview()
         {
+            if (_report == null) return;
+
             txtReportPreview.Clear();
             txtReportPreview.AppendText($"z* (primal): {_report.PrimalObjective:0.000}\n");
             if (_report.DualObjective.HasValue)
@@ -267,7 +414,6 @@ namespace LPR381ProjectGS2.Presentation
                 txtReportPreview.AppendText($"notes: {_report.Notes}\n");
         }
 
-        // Helper to compute dual objective from primal
         private double ComputeDualObjectiveFromPrimal()
         {
             if (_primalResult == null || !_primalResult.Iterations.Any()) return 0.0;
@@ -312,40 +458,74 @@ namespace LPR381ProjectGS2.Presentation
 
         private void FillGridWithSnapshot(DataGridView grid, TableauSnapshot snap)
         {
+            if (grid == null || snap == null || snap.Matrix == null) return;
+
             grid.SuspendLayout();
-            grid.Columns.Clear();
             grid.Rows.Clear();
 
-            for (int j = 0; j < snap.ColumnLabels.Length; j++)
+            int rows = snap.Matrix.GetLength(0);
+            int cols = snap.Matrix.GetLength(1);
+
+            // Ensure we have column labels
+            string[] colLabels = snap.ColumnLabels ?? Enumerable.Range(0, cols).Select(i => "c" + i).ToArray();
+            string[] rowLabels = snap.RowLabels ?? Enumerable.Range(0, rows).Select(i => "r" + i).ToArray();
+
+            // Build columns if needed
+            if (grid.Columns.Count != cols)
             {
-                var col = new DataGridViewTextBoxColumn
+                grid.Columns.Clear();
+                for (int j = 0; j < cols; j++)
                 {
-                    HeaderText = snap.ColumnLabels[j],
-                    Name = "col" + j,
-                    SortMode = DataGridViewColumnSortMode.NotSortable
-                };
-                grid.Columns.Add(col);
+                    var col = new DataGridViewTextBoxColumn
+                    {
+                        HeaderText = colLabels[j],
+                        Name = "col" + j,
+                        SortMode = DataGridViewColumnSortMode.NotSortable,
+                        AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+                    };
+                    grid.Columns.Add(col);
+                }
             }
 
-            for (int i = 0; i < snap.RowLabels.Length; i++)
+            // Fill rows
+            for (int i = 0; i < rows; i++)
             {
                 int r = grid.Rows.Add();
-                grid.Rows[r].HeaderCell.Value = snap.RowLabels[i];
-                for (int j = 0; j < snap.ColumnLabels.Length; j++)
-                    grid.Rows[r].Cells[j].Value = Math.Round(snap.Matrix[i, j], 3).ToString("0.000");
+                grid.Rows[r].HeaderCell.Value = rowLabels[i];
+                for (int j = 0; j < cols; j++)
+                {
+                    double val = snap.Matrix[i, j];
+                    grid.Rows[r].Cells[j].Value = double.IsNaN(val) ? "-" : val.ToString("0.000");
+                }
             }
 
             grid.ResumeLayout();
+            grid.Refresh();
         }
 
-        // TODO: Implement these helper functions to connect grid selection and user input
-        private string GetSelectedVariableFromGrid(DataGridView g) => "x1"; // placeholder
-        private string GetSelectedConstraintFromGrid(DataGridView g) => "c1"; // placeholder
-        private double GetNewValueFromInput() => 1.0; // placeholder
-                                                      // Add this method to frmSensitivity.cs to fix CS1061
+        // ===== Updated Selection Helpers =====
+
+        private string GetSelectedVariableFromGrid(DataGridView g)
+        {
+            if (g.CurrentRow != null)
+                return g.CurrentRow.Cells[0].Value?.ToString();
+            return null;
+        }
+
+        private string GetSelectedConstraintFromGrid(DataGridView g)
+        {
+            if (g.CurrentRow != null)
+                return g.CurrentRow.Cells[0].Value?.ToString();
+            return null;
+        }
+
+        private double GetNewValueFromInput()
+        {
+            return (double)numNewValue.Value;
+        }
+
         private void btnExport_Click(object sender, EventArgs e)
         {
-            // Example implementation: Export the report preview to a text file
             using (var sfd = new SaveFileDialog { Filter = "Text Files (*.txt)|*.txt", Title = "Export Sensitivity Report" })
             {
                 if (sfd.ShowDialog() == DialogResult.OK)
@@ -355,11 +535,96 @@ namespace LPR381ProjectGS2.Presentation
                 }
             }
         }
-        // Add this method to frmSensitivity.cs to fix CS1061
-        private void gridObjRanges_CellContentClick(object sender, DataGridViewCellEventArgs e)
+
+        private void gridObjRanges_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
+
+        // ===== Sensitivity Actions =====
+        private void btnApplyVarChange_Click(object sender, EventArgs e)
         {
-            // You can implement any desired logic here, or leave it empty if not needed.
+            string varName = GetSelectedVariableFromGrid(gridObjRanges);
+            if (string.IsNullOrEmpty(varName))
+            {
+                MessageBox.Show("Select a variable from the table first.");
+                return;
+            }
+
+            double newValue = GetNewValueFromInput();
+            ApplyVariableChange(varName, newValue);
+            RecomputeSensitivityReport();
+
+            lblStatus.Text = $"Variable {varName} objective coefficient changed to {newValue}. Solution updated.";
+        }
+
+        private void btnAddActivity_Click(object sender, EventArgs e)
+        {
+            AddNewActivity();
+            RecomputeSensitivityReport();
+
+            lblStatus.Text = $"Added new activity. Solution updated.";
+
+        }
+
+        private void btnAddConstraint_Click(object sender, EventArgs e)
+        {
+            AddNewConstraint();
+            RecomputeSensitivityReport();
+
+            lblStatus.Text = $"Added new constraint. Solution updated.";
+        }
+
+        private void btnApplyRhsChange_Click(object sender, EventArgs e)
+        {
+            string constrName = GetSelectedConstraintFromGrid(gridRhsRanges);
+            if (string.IsNullOrEmpty(constrName))
+            {
+                MessageBox.Show("Select a constraint from the table first.");
+                return;
+            }
+
+            double newRhs = GetNewValueFromInput();
+            ApplyRhsChange(constrName, newRhs);
+
+            RecomputeSensitivityReport();
+
+            lblStatus.Text = $"Constraint {constrName} RHS changed to {newRhs}. Solution updated.";
+        }
+
+        private void btnCopyReport_Click(object sender, EventArgs e)
+        {
+            using (var sfd = new SaveFileDialog { Filter = "Text Files (*.txt)|*.txt", Title = "Export Sensitivity Report" })
+            {
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(sfd.FileName, txtReportPreview.Text);
+                    MessageBox.Show("Report exported successfully.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+        }
+        // Add this event handler method to fix CS0103
+        
+
+        private void lstDualIters_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (_dualResult == null || !_dualResult.Iterations.Any()) return;
+            if (lstDualIters.SelectedIndex < 0 || lstDualIters.SelectedIndex >= _dualResult.Iterations.Count) return;
+
+            var selectedIteration = _dualResult.Iterations[lstDualIters.SelectedIndex];
+            FillGridWithSnapshot(gridDualTableau, selectedIteration);
+        }
+
+        private void lstPrimalIters_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            // Make sure a valid index is selected
+            if (_primalResult == null || lstPrimalIters.SelectedIndex < 0) return;
+
+            int iterIndex = lstPrimalIters.SelectedIndex;
+
+            if (iterIndex >= 0 && iterIndex < _primalResult.Iterations.Count)
+            {
+                var snapshot = _primalResult.Iterations[iterIndex];
+                FillGridWithSnapshot(gridPrimalTableau, snapshot);
+                lblStatus.Text = $"Displaying iteration {iterIndex + 1}";
+            }
         }
     }
 }
-
