@@ -93,10 +93,14 @@ namespace LPR381ProjectGS2
             frmCuttingPlane.ShowDialog();
         }
 
+
         private void btnSensitvityAnalysis_Click(object sender, EventArgs e)
         {
             frmSensitivity frmSensitivity = new frmSensitivity();
             frmSensitivity.ShowDialog();
+        }
+        private void label1_Click(object sender, EventArgs e)
+        {
         }
     }
 }
