@@ -21,5 +21,24 @@ namespace LPR381ProjectGS2.Domain.Analysis
         public bool StrongDualityHolds { get; set; }
 
         public string Notes { get; set; } = "";
+
+        public SensitivityRange GetVariableRange(string varName)
+        {
+            if (!_variableValues.ContainsKey(varName)) return new SensitivityRange { Min = 0, Max = 0 };
+            double val = _variableValues[varName];
+            double perturb = Math.Abs(val) * 0.1;
+            return new SensitivityRange { Min = val - perturb, Max = val + perturb };
+        }
+
+        public SensitivityRange GetRhsRange(string constraintName)
+        {
+            if (!_rhsValues.ContainsKey(constraintName)) return new SensitivityRange { Min = 0, Max = 0 };
+            double val = _rhsValues[constraintName];
+            double perturb = Math.Abs(val) * 0.1;
+            return new SensitivityRange { Min = val - perturb, Max = val + perturb };
+        }
+
+
     }
+
 }

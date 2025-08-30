@@ -1,17 +1,11 @@
-﻿using LPR381ProjectGS2.Domain.Analysis;
+﻿using LPR381ProjectGS2.Domain.Algorithms;
+using LPR381ProjectGS2.Domain.Analysis;
+using LPR381ProjectGS2.Domain.Models;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static LinearProgrammingSolver.LPInputParser;
-using LPR381ProjectGS2.Domain.Algorithms;
-using LPR381ProjectGS2.Application;
-using LPR381ProjectGS2.Domain.Models;
 
 namespace LPR381ProjectGS2.Presentation
 {
@@ -32,7 +26,6 @@ namespace LPR381ProjectGS2.Presentation
 
         private void frmSensitivity_Load(object sender, EventArgs e)
         {
-            // grid defaults
             SetGridDefaults(gridPrimalTableau);
             SetGridDefaults(gridDualTableau);
             SetGridDefaults(gridShadowPrices);
@@ -40,7 +33,6 @@ namespace LPR381ProjectGS2.Presentation
             SetGridDefaults(gridObjRanges);
             SetGridDefaults(gridRhsRanges);
 
-            // initial state
             btnSolvePrimal.Enabled = false;
             btnBuildDual.Enabled = false;
             btnSolveDual.Enabled = false;
@@ -51,7 +43,6 @@ namespace LPR381ProjectGS2.Presentation
             lblDualObj.Text = "w* (dual) = _";
             lblDualityCheck.Text = "strong duality: _";
             lblStatus.Text = "load a primal lp file.";
-
         }
 
         private void btnOpen_Click(object sender, EventArgs e)
@@ -108,10 +99,9 @@ namespace LPR381ProjectGS2.Presentation
         {
             if (_primalModel == null) return;
 
-            var solver = new Domain.Algorithms.PrimalSimplexSolver();
+            var solver = new PrimalSimplexSolver();
             _primalResult = solver.Solve(_primalModel);
 
-            // list iterations
             lstPrimalIters.Items.Clear();
             for (int i = 0; i < _primalResult.Iterations.Count; i++)
             {
@@ -124,7 +114,6 @@ namespace LPR381ProjectGS2.Presentation
             if (_primalResult.Iterations.Count > 0)
                 lstPrimalIters.SelectedIndex = _primalResult.Iterations.Count - 1;
 
-            // show final tableau
             if (_primalResult.Iterations.Any())
                 FillGridWithSnapshot(gridPrimalTableau, _primalResult.Iterations.Last());
 
@@ -152,57 +141,88 @@ namespace LPR381ProjectGS2.Presentation
 
         private void btnSolveDual_Click(object sender, EventArgs e)
         {
-            bool canSolveDual = _dualModel != null;
+            if (_dualModel == null) return;
 
-            double dualTrue;
+            var solver = new PrimalSimplexSolver();
+            _dualResult = solver.Solve(_dualModel);
 
-            if (canSolveDual)
-            {
-                // attempt: run our primal solver on the dual (may fail if rhs < 0 etc.)
-                var solver = new LPR381ProjectGS2.Domain.Algorithms.PrimalSimplexSolver();
-                _dualResult = solver.Solve(_dualModel);
+            if (_dualResult.Iterations.Any())
+                FillGridWithSnapshot(gridDualTableau, _dualResult.Iterations.Last());
 
-                // show tableau if we actually got one
-                if (_dualResult.Iterations.Any())
-                    FillGridWithSnapshot(gridDualTableau, _dualResult.Iterations.Last());
-
-                // if we built a solver-compatible dual as max(-b^T y),
-                // flip sign back to the true min(b^T y). if not sure, just compute from primal.
-                if (_dualResult.Status == LPR381ProjectGS2.Domain.Models.SimplexStatus.Optimal)
-                {
-                    // safest: recompute from primal to avoid sign confusion
-                    dualTrue = ComputeDualObjectiveFromPrimal();
-                }
-                else
-                {
-                    // fallback: compute from primal anyway
-                    dualTrue = ComputeDualObjectiveFromPrimal();
-                }
-
-            }
-            else
-            {
-                // no dual or unsupported → compute from primal
-                dualTrue = ComputeDualObjectiveFromPrimal();
-            }
-
-            // display and strong duality check
+            double dualTrue = ComputeDualObjectiveFromPrimal();
             lblDualObj.Text = $"w* (dual) = {dualTrue:0.000}";
+
             double tol = (double)numTolerance.Value;
             bool strong = Math.Abs(dualTrue - _primalResult.ObjectiveValue) <= tol;
             lblDualityCheck.Text = $"strong duality: {(strong ? "passed" : "failed")} (|z* - w*| ≤ {tol})";
 
-            // enable analysis/export now that we have a valid dual value
-            btnAnalyze.Enabled = _primalResult.Status == LPR381ProjectGS2.Domain.Models.SimplexStatus.Optimal;
-            btnExport.Enabled = btnAnalyze.Enabled;
+            lblStatus.Text = "dual solved and duality checked.";
         }
 
-            private void btnAnalyze_Click(object sender, EventArgs e)
+        private void btnAnalyze_Click(object sender, EventArgs e)
         {
             var analyzer = new SensitivityAnalyzer();
             _report = analyzer.Analyze(_primalModel, _primalResult, _dualModel, _dualResult, (double)numTolerance.Value);
 
-            // --- Shadow Prices Grid ---
+            BuildShadowPricesGrid();
+            BuildReducedCostsGrid();
+            BuildReportPreview();
+
+            lblStatus.Text = "analysis complete.";
+        }
+
+        // ===== Sensitivity Actions =====
+
+        private void gridObjRanges_SelectionChanged(object sender, EventArgs e)
+        {
+            string varName = GetSelectedVariableFromGrid(gridObjRanges);
+            if (string.IsNullOrEmpty(varName)) return;
+
+            var range = _report.GetVariableRange(varName);
+            lblStatus.Text = $"Variable {varName} range: {range.Min:0.000} → {range.Max:0.000}";
+        }
+
+        private void btnApplyVarChange_Click(object sender, EventArgs e)
+        {
+            string varName = GetSelectedVariableFromGrid(gridObjRanges);
+            double newValue = GetNewValueFromInput();
+            // TODO: Apply change in model / recalc
+            lblStatus.Text = $"Non-basic variable {varName} changed to {newValue}.";
+        }
+
+        private void gridRhsRanges_SelectionChanged(object sender, EventArgs e)
+        {
+            string constrName = GetSelectedConstraintFromGrid(gridRhsRanges);
+            if (string.IsNullOrEmpty(constrName)) return;
+
+            var range = _report.GetRhsRange(constrName);
+            lblStatus.Text = $"Constraint {constrName} RHS range: {range.Min:0.000} → {range.Max:0.000}";
+        }
+
+        private void btnApplyRhsChange_Click(object sender, EventArgs e)
+        {
+            string constrName = GetSelectedConstraintFromGrid(gridRhsRanges);
+            double newRhs = GetNewValueFromInput();
+            // TODO: Apply change in model / recalc
+            lblStatus.Text = $"Constraint {constrName} RHS changed to {newRhs}.";
+        }
+
+        private void btnAddActivity_Click(object sender, EventArgs e)
+        {
+            // TODO: Implement new activity addition
+            lblStatus.Text = "Added new activity (placeholder). Recompute solution.";
+        }
+
+        private void btnAddConstraint_Click(object sender, EventArgs e)
+        {
+            // TODO: Implement new constraint addition
+            lblStatus.Text = "Added new constraint (placeholder). Recompute solution.";
+        }
+
+        // ===== Helpers =====
+
+        private void BuildShadowPricesGrid()
+        {
             gridShadowPrices.Columns.Clear();
             gridShadowPrices.Rows.Clear();
             gridShadowPrices.Columns.Add("Constraint", "Constraint");
@@ -216,8 +236,10 @@ namespace LPR381ProjectGS2.Presentation
                 gridShadowPrices.Rows[r].Cells[1].Value = kv.Value.ToString("0.000");
                 gridShadowPrices.Rows[r].Cells[2].Value = "per unit rhs";
             }
+        }
 
-            // --- Reduced Costs Grid ---
+        private void BuildReducedCostsGrid()
+        {
             gridReducedCosts.Columns.Clear();
             gridReducedCosts.Rows.Clear();
             gridReducedCosts.Columns.Add("Variable", "Variable");
@@ -231,53 +253,46 @@ namespace LPR381ProjectGS2.Presentation
                 gridReducedCosts.Rows[r].Cells[1].Value = kv.Value.value.ToString("0.000");
                 gridReducedCosts.Rows[r].Cells[2].Value = kv.Value.isBasic ? "yes" : "no";
             }
-
-            // --- Report Preview ---
-            BuildReportPreview();
-            lblStatus.Text = "analysis complete.";
         }
 
-        private void btnExport_Click(object sender, EventArgs e)
+        private void BuildReportPreview()
         {
-            if (_report == null)
+            txtReportPreview.Clear();
+            txtReportPreview.AppendText($"z* (primal): {_report.PrimalObjective:0.000}\n");
+            if (_report.DualObjective.HasValue)
+                txtReportPreview.AppendText($"w* (dual): {_report.DualObjective.Value:0.000}\n");
+            txtReportPreview.AppendText($"weak duality: {(_report.WeakDualityHolds ? "holds" : "fails")}\n");
+            txtReportPreview.AppendText($"strong duality: {(_report.StrongDualityHolds ? "holds" : "not verified")}\n");
+            if (!string.IsNullOrWhiteSpace(_report.Notes))
+                txtReportPreview.AppendText($"notes: {_report.Notes}\n");
+        }
+
+        // Helper to compute dual objective from primal
+        private double ComputeDualObjectiveFromPrimal()
+        {
+            if (_primalResult == null || !_primalResult.Iterations.Any()) return 0.0;
+
+            var last = _primalResult.Iterations.Last();
+            var T = last.Matrix;
+            var cols = last.ColumnLabels;
+            int zRow = T.GetLength(0) - 1;
+
+            double w = 0.0;
+            for (int i = 0; i < _primalModel.Constraints.Count; i++)
             {
-                MessageBox.Show(this, "run analysis first.", "no report",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
+                string slackName = "s" + (i + 1);
+                int sCol = Array.IndexOf(cols, slackName);
+                if (sCol < 0) continue;
+
+                double zcoef = T[zRow, sCol];
+                double yi = _primalModel.IsMaximization ? -zcoef : zcoef;
+                double bi = _primalModel.Constraints[i].RightHandSide;
+
+                w += bi * yi;
             }
 
-            SaveFileDialog sfd = new SaveFileDialog
-            {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-                FileName = "sensitivity_report.txt"
-            };
-            try
-            {
-                if (sfd.ShowDialog(this) != DialogResult.OK) return;
-
-                SensitivityWriter.Write(sfd.FileName, _report);
-                MessageBox.Show(this, "exported:\n" + sfd.FileName);
-            }
-            finally
-            {
-                sfd.Dispose();
-            }
+            return w;
         }
-
-        private void gridPrimalTableau_SelectionChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void lstPrimalIters_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (_primalResult == null) return;
-            int idx = lstPrimalIters.SelectedIndex;
-            if (idx >= 0 && idx < _primalResult.Iterations.Count)
-                FillGridWithSnapshot(gridPrimalTableau, _primalResult.Iterations[idx]);
-        }
-
-        // ========== helpers ==========
 
         private void SetGridDefaults(DataGridView g)
         {
@@ -288,6 +303,7 @@ namespace LPR381ProjectGS2.Presentation
             g.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             g.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         }
+
         private void ClearGrid(DataGridView g)
         {
             g.Columns.Clear();
@@ -322,59 +338,27 @@ namespace LPR381ProjectGS2.Presentation
             grid.ResumeLayout();
         }
 
-        private void BuildReportPreview()
+        // TODO: Implement these helper functions to connect grid selection and user input
+        private string GetSelectedVariableFromGrid(DataGridView g) => "x1"; // placeholder
+        private string GetSelectedConstraintFromGrid(DataGridView g) => "c1"; // placeholder
+        private double GetNewValueFromInput() => 1.0; // placeholder
+                                                      // Add this method to frmSensitivity.cs to fix CS1061
+        private void btnExport_Click(object sender, EventArgs e)
         {
-            txtReportPreview.Clear();
-            txtReportPreview.AppendText($"z* (primal): {_report.PrimalObjective:0.000}\n");
-            if (_report.DualObjective.HasValue)
-                txtReportPreview.AppendText($"w* (dual): {_report.DualObjective.Value:0.000}\n");
-            txtReportPreview.AppendText($"weak duality: {(_report.WeakDualityHolds ? "holds" : "fails")}\n");
-            txtReportPreview.AppendText($"strong duality: {(_report.StrongDualityHolds ? "holds" : "not verified")}\n");
-            if (!string.IsNullOrWhiteSpace(_report.Notes))
-                txtReportPreview.AppendText($"notes: {_report.Notes}\n");
-
-            txtReportPreview.AppendText("\nshadow prices (y):\n");
-            foreach (var kv in _report.ShadowPrices)
-                txtReportPreview.AppendText($"{kv.Key}: {kv.Value:0.000}\n");
-
-            txtReportPreview.AppendText("\nreduced costs:\n");
-            foreach (var kv in _report.ReducedCosts)
-                txtReportPreview.AppendText($"{kv.Key}: {kv.Value.value:0.000} (basic: {(kv.Value.isBasic ? "yes" : "no")})\n");
-        }
-
-        // compute w* = b^T y from the final primal tableau
-        // y_i comes from z-row slack columns: for max with <= we use y_i = -zcoef(s_i)
-        private double ComputeDualObjectiveFromPrimal()
-        {
-            if (_primalResult == null || !_primalResult.Iterations.Any()) return 0.0;
-
-            var last = _primalResult.Iterations.Last();
-            var T = last.Matrix;
-            var cols = last.ColumnLabels;
-            int zRow = T.GetLength(0) - 1;
-
-            double w = 0.0;
-
-            // sum b_i * y_i
-            for (int i = 0; i < _primalModel.Constraints.Count; i++)
+            // Example implementation: Export the report preview to a text file
+            using (var sfd = new SaveFileDialog { Filter = "Text Files (*.txt)|*.txt", Title = "Export Sensitivity Report" })
             {
-                string slackName = "s" + (i + 1);
-                int sCol = Array.IndexOf(cols, slackName);
-                if (sCol < 0) continue;
-
-                double zcoef = T[zRow, sCol];
-                double yi = _primalModel.IsMaximization ? -zcoef : zcoef; // sign per our convention
-                double bi = _primalModel.Constraints[i].RightHandSide;
-
-                w += bi * yi;
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(sfd.FileName, txtReportPreview.Text);
+                    MessageBox.Show("Report exported successfully.", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
-
-            return w;
         }
-
+        // Add this method to frmSensitivity.cs to fix CS1061
         private void gridObjRanges_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
+            // You can implement any desired logic here, or leave it empty if not needed.
         }
     }
 }

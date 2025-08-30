@@ -75,6 +75,10 @@
             this.btnCopyReport = new System.Windows.Forms.Button();
             this.txtReportPreview = new System.Windows.Forms.RichTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.btnApplyVarChange = new System.Windows.Forms.Button();
+            this.btnApplyRhsChange = new System.Windows.Forms.Button();
+            this.btnAddActivity = new System.Windows.Forms.Button();
+            this.btnAddConstraint = new System.Windows.Forms.Button();
             this.tabMain.SuspendLayout();
             this.Overview.SuspendLayout();
             this.grpDual.SuspendLayout();
@@ -274,7 +278,6 @@
             this.lstPrimalIters.Name = "lstPrimalIters";
             this.lstPrimalIters.Size = new System.Drawing.Size(120, 95);
             this.lstPrimalIters.TabIndex = 2;
-            this.lstPrimalIters.SelectedIndexChanged += new System.EventHandler(this.lstPrimalIters_SelectedIndexChanged);
             // 
             // gridPrimalTableau
             // 
@@ -288,7 +291,6 @@
             this.gridPrimalTableau.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.gridPrimalTableau.Size = new System.Drawing.Size(268, 106);
             this.gridPrimalTableau.TabIndex = 0;
-            this.gridPrimalTableau.SelectionChanged += new System.EventHandler(this.gridPrimalTableau_SelectionChanged);
             // 
             // ShadowPricesReducedCosts
             // 
@@ -402,6 +404,7 @@
             // 
             // grpRhsRanges
             // 
+            this.grpRhsRanges.Controls.Add(this.btnApplyRhsChange);
             this.grpRhsRanges.Controls.Add(this.gridRhsRanges);
             this.grpRhsRanges.Location = new System.Drawing.Point(476, 18);
             this.grpRhsRanges.Name = "grpRhsRanges";
@@ -471,6 +474,9 @@
             // 
             // grpObjRanges
             // 
+            this.grpObjRanges.Controls.Add(this.btnAddConstraint);
+            this.grpObjRanges.Controls.Add(this.btnAddActivity);
+            this.grpObjRanges.Controls.Add(this.btnApplyVarChange);
             this.grpObjRanges.Controls.Add(this.gridObjRanges);
             this.grpObjRanges.Location = new System.Drawing.Point(3, 18);
             this.grpObjRanges.Name = "grpObjRanges";
@@ -562,6 +568,42 @@
             this.toolTip1.ReshowDelay = 100;
             this.toolTip1.ShowAlways = true;
             // 
+            // btnApplyVarChange
+            // 
+            this.btnApplyVarChange.Location = new System.Drawing.Point(93, 227);
+            this.btnApplyVarChange.Name = "btnApplyVarChange";
+            this.btnApplyVarChange.Size = new System.Drawing.Size(103, 29);
+            this.btnApplyVarChange.TabIndex = 3;
+            this.btnApplyVarChange.Text = "Variable Change";
+            this.btnApplyVarChange.UseVisualStyleBackColor = true;
+            // 
+            // btnApplyRhsChange
+            // 
+            this.btnApplyRhsChange.Location = new System.Drawing.Point(15, 227);
+            this.btnApplyRhsChange.Name = "btnApplyRhsChange";
+            this.btnApplyRhsChange.Size = new System.Drawing.Size(110, 29);
+            this.btnApplyRhsChange.TabIndex = 4;
+            this.btnApplyRhsChange.Text = "Apply RHS Change";
+            this.btnApplyRhsChange.UseVisualStyleBackColor = true;
+            // 
+            // btnAddActivity
+            // 
+            this.btnAddActivity.Location = new System.Drawing.Point(222, 227);
+            this.btnAddActivity.Name = "btnAddActivity";
+            this.btnAddActivity.Size = new System.Drawing.Size(103, 29);
+            this.btnAddActivity.TabIndex = 5;
+            this.btnAddActivity.Text = "Add Activity";
+            this.btnAddActivity.UseVisualStyleBackColor = true;
+            // 
+            // btnAddConstraint
+            // 
+            this.btnAddConstraint.Location = new System.Drawing.Point(353, 227);
+            this.btnAddConstraint.Name = "btnAddConstraint";
+            this.btnAddConstraint.Size = new System.Drawing.Size(103, 29);
+            this.btnAddConstraint.TabIndex = 6;
+            this.btnAddConstraint.Text = "Add Constraint";
+            this.btnAddConstraint.UseVisualStyleBackColor = true;
+            // 
             // frmSensitivity
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -651,5 +693,9 @@
         private System.Windows.Forms.RichTextBox txtReportPreview;
         private System.Windows.Forms.Button btnCopyReport;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Button btnApplyRhsChange;
+        private System.Windows.Forms.Button btnApplyVarChange;
+        private System.Windows.Forms.Button btnAddConstraint;
+        private System.Windows.Forms.Button btnAddActivity;
     }
 }
