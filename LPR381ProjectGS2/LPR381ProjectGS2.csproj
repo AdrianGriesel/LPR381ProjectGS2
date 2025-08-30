@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BranchAndBoundSolver.cs" />
+    <Compile Include="CuttingPlaneSolver.cs" />
     <Compile Include="frmBranchAndBound.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,6 +94,9 @@
     <Compile Include="TableauSnapshot.cs" />
     <EmbeddedResource Include="frmBranchAndBound.resx">
       <DependentUpon>frmBranchAndBound.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCuttingPlane.resx">
+      <DependentUpon>frmCuttingPlane.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FrmKnapsackBnb.resx">
       <DependentUpon>FrmKnapsackBnb.cs</DependentUpon>

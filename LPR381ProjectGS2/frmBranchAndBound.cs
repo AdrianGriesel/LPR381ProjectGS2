@@ -66,29 +66,77 @@ namespace LPR381ProjectGS2
 
                 // Show pivot iterations
                 tabPivots.TabPages.Clear();
-                int iter = 1;
-                foreach (var tableau in node.Tableaus)
+                if (node.Log != null && node.Model != null)
                 {
-                    var tab = new TabPage($"Pivot {iter++}");
-                    var grid = new DataGridView
+                    int iter = 1;
+                    foreach (var snapshot in node.Log.Snapshots)
                     {
-                        Dock = DockStyle.Fill,
-                        ReadOnly = true,
-                        AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
-                    };
-                    var dt = new DataTable();
-                    for (int c = 0; c < tableau.GetLength(1); c++)
-                        dt.Columns.Add($"C{c}");
-                    for (int r = 0; r < tableau.GetLength(0); r++)
-                    {
-                        var row = dt.NewRow();
-                        for (int c = 0; c < tableau.GetLength(1); c++)
-                            row[c] = tableau[r, c];
-                        dt.Rows.Add(row);
+                        var tab = new TabPage($"Pivot {iter++}");
+                        var grid = new DataGridView
+                        {
+                            Dock = DockStyle.Fill,
+                            ReadOnly = true,
+                            AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells,
+                            RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders
+                        };
+
+                        var tableau = snapshot.Tableau;
+                        var dt = new DataTable();
+
+                        int numVars = node.Model.VarNames.Length;
+                        int numColsInTableau = tableau.GetLength(1);
+
+                        // Add columns
+                        for (int c = 0; c < numVars; c++)
+                        {
+                            if (c < node.Model.VarNames.Length)
+                                dt.Columns.Add(node.Model.VarNames[c]);
+                            else
+                                dt.Columns.Add("?");
+                        }
+                        if (numColsInTableau > numVars)
+                        {
+                            dt.Columns.Add("RHS");
+                        }
+
+                        // Add rows
+                        for (int r = 0; r < tableau.GetLength(0); r++)
+                        {
+                            var row = dt.NewRow();
+                            for (int c = 0; c < numColsInTableau; c++)
+                            {
+                                if (c < dt.Columns.Count)
+                                    row[c] = tableau[r, c];
+                            }
+                            dt.Rows.Add(row);
+                        }
+
+                        grid.DataSource = dt;
+
+                        // Set row headers
+                        for (int r = 0; r < snapshot.Basis.Length; r++)
+                        {
+                            if (r < grid.Rows.Count)
+                            {
+                                int basisVarIndex = snapshot.Basis[r];
+                                if (basisVarIndex >= 0 && basisVarIndex < numVars)
+                                {
+                                    grid.Rows[r].HeaderCell.Value = node.Model.VarNames[basisVarIndex];
+                                }
+                                else
+                                {
+                                    grid.Rows[r].HeaderCell.Value = "??";
+                                }
+                            }
+                        }
+                        if (snapshot.Basis.Length < grid.Rows.Count)
+                        {
+                            grid.Rows[snapshot.Basis.Length].HeaderCell.Value = "Z";
+                        }
+
+                        tab.Controls.Add(grid);
+                        tabPivots.TabPages.Add(tab);
                     }
-                    grid.DataSource = dt;
-                    tab.Controls.Add(grid);
-                    tabPivots.TabPages.Add(tab);
                 }
             }
         }

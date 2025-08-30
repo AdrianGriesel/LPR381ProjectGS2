@@ -22,7 +22,7 @@ namespace LinearProgrammingSolver
 
     
 
-    internal class ExpandedModel
+    public class ExpandedModel
     {
         public bool IsMaximization = true;
         public int NumVars;                 // total columns (orig + slack + artificials)
@@ -486,7 +486,8 @@ namespace LinearProgrammingSolver
         public string Status;
         public double Bound; // LP relaxation objective (for maximization)
         public double[] VariableAssignments;
-        public List<double[,]> Tableaus;
+        public SimplexLog Log;
+        public ExpandedModel Model;
         public List<BranchCut> Cuts;
 
         public Node(string name, int numVars)
@@ -495,7 +496,7 @@ namespace LinearProgrammingSolver
             Status = "Open";
             Bound = double.NegativeInfinity;
             VariableAssignments = new double[numVars];
-            Tableaus = new List<double[,]>();
+            Log = new SimplexLog();
             Cuts = new List<BranchCut>();
         }
 
@@ -644,6 +645,7 @@ namespace LinearProgrammingSolver
         private void SolveNode(Node node)
         {
             ExpandedModel em = CloneExpandedModel(_baseEm);
+            node.Model = em;
 
             for (int ci = 0; ci < node.Cuts.Count; ci++)
             {
@@ -696,12 +698,7 @@ namespace LinearProgrammingSolver
             var simplex = new SimplexSolver(em);
             var res = simplex.Solve();
 
-            node.Tableaus.Clear();
-            if (res != null && res.Log != null && res.Log.Snapshots != null)
-            {
-                for (int s = 0; s < res.Log.Snapshots.Count; s++)
-                    node.Tableaus.Add(res.Log.Snapshots[s].Tableau);
-            }
+            node.Log = res.Log;
 
             if (res == null || res.Status == SimplexStatus.Infeasible)
             {
