@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using static LinearProgrammingSolver.LPInputParser;
 using LPR381ProjectGS2.Domain.Algorithms;
 using LPR381ProjectGS2.Application;
+using LPR381ProjectGS2.Domain.Models;
 
 namespace LPR381ProjectGS2.Presentation
 {
