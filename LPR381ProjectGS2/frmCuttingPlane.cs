@@ -1,29 +1,18 @@
-﻿using LinearProgrammingSolver;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using LinearProgrammingSolver;
 
 namespace LPR381ProjectGS2
 {
     public partial class frmCuttingPlane : Form
     {
-        private CuttingPlaneSolver solver;
-
         public frmCuttingPlane()
         {
             InitializeComponent();
         }
 
-        private void frmCuttingPlane_Load(object sender, EventArgs e)
-        {
-
-        }
         private void btnLoadFile_Click(object sender, EventArgs e)
         {
             using (var ofd = new OpenFileDialog())
@@ -34,9 +23,9 @@ namespace LPR381ProjectGS2
                     try
                     {
                         var model = LPInputParser.ParseInputFile(ofd.FileName);
-                        solver = new CuttingPlaneSolver(model);
-                        solver.Solve();
-                        PopulateTabs();
+                        var solver = new CuttingPlaneSolver(model);
+                        var result = solver.Solve();
+                        DisplayResults(result);
                     }
                     catch (Exception ex)
                     {
@@ -46,44 +35,65 @@ namespace LPR381ProjectGS2
             }
         }
 
-        private void PopulateTabs()
+        private void DisplayResults(CuttingPlaneResult result)
         {
             tabIterations.TabPages.Clear();
 
-            int iter = 0;
-            foreach (var tableau in solver.Iterations)
+            foreach (var iterResult in result.Iterations)
             {
-                var tab = new TabPage(iter == 0 ? "Canonical Form" : $"Iteration {iter}");
-
+                var tabPage = new TabPage($"Iteration {iterResult.Iteration}");
                 var grid = new DataGridView
                 {
                     Dock = DockStyle.Fill,
                     ReadOnly = true,
-                    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells
+                    AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells,
+                    RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders
                 };
 
-                var dt = new DataTable();
-
-                // Add column headers
-                dt.Columns.Add("Row");
-                foreach (var colName in solver.ColumnNames)
-                    dt.Columns.Add(colName);
-
-                // Fill rows
-                for (int r = 0; r < tableau.GetLength(0); r++)
+                var simplexResult = iterResult.SimplexResult;
+                if (simplexResult != null && simplexResult.Log.Snapshots.Any())
                 {
-                    var row = dt.NewRow();
-                    row[0] = solver.RowNames[r];
-                    for (int c = 0; c < tableau.GetLength(1); c++)
-                        row[c + 1] = tableau[r, c];
-                    dt.Rows.Add(row);
+                    var finalSnapshot = simplexResult.Log.Snapshots.Last();
+                    var finalTableau = finalSnapshot.Tableau;
+                    var expandedModel = iterResult.ExpandedModel;
+
+                    grid.ColumnCount = expandedModel.VarNames.Length + 1;
+                    for (int c = 0; c < expandedModel.VarNames.Length; c++)
+                    {
+                        grid.Columns[c].HeaderText = expandedModel.VarNames[c];
+                    }
+                    grid.Columns[expandedModel.VarNames.Length].HeaderText = "RHS";
+
+                    grid.RowCount = finalTableau.GetLength(0);
+                    for (int r = 0; r < finalTableau.GetLength(0); r++)
+                    {
+                        for (int c = 0; c < finalTableau.GetLength(1); c++)
+                        {
+                            grid.Rows[r].Cells[c].Value = finalTableau[r, c];
+                        }
+                    }
+
+                    for (int r = 0; r < finalSnapshot.Basis.Length; r++)
+                    {
+                        if(r < grid.Rows.Count)
+                        {
+                            grid.Rows[r].HeaderCell.Value = $"C{r + 1}";
+                        }
+                    }
+                    if(finalSnapshot.Basis.Length < grid.Rows.Count)
+                        grid.Rows[finalSnapshot.Basis.Length].HeaderCell.Value = "Z";
                 }
+                
+                var infoLabel = new Label
+                {
+                    Dock = DockStyle.Bottom,
+                    Text = $"Objective: {iterResult.ObjectiveValue:F2} | Integer: {iterResult.IsInteger} | Cut: {iterResult.Cut ?? "N/A"} | Status: {iterResult.TerminationReason}",
+                    AutoSize = true
+                };
 
-                grid.DataSource = dt;
-                tab.Controls.Add(grid);
-                tabIterations.TabPages.Add(tab);
-
-                iter++;
+                tabPage.Controls.Add(grid);
+                tabPage.Controls.Add(infoLabel);
+                tabIterations.TabPages.Add(tabPage);
             }
         }
     }

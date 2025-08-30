@@ -1,117 +1,190 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using static LinearProgrammingSolver.LPInputParser;
 
 namespace LinearProgrammingSolver
 {
-    using static LPInputParser;
+    public class CuttingPlaneResult
+    {
+        public List<IterationResult> Iterations { get; set; }
+        public bool IsOptimal { get; set; }
+        public bool IsInteger { get; set; }
+        public double[] Solution { get; set; }
+        public double ObjectiveValue { get; set; }
+
+        public CuttingPlaneResult()
+        {
+            Iterations = new List<IterationResult>();
+        }
+    }
+
+    public class IterationResult
+    {
+        public int Iteration { get; set; }
+        public double ObjectiveValue { get; set; }
+        public double[] PrimalSolution { get; set; }
+        public bool IsOptimal { get; set; }
+        public bool IsInteger { get; set; }
+        public string Cut { get; set; }
+        public SimplexResult SimplexResult { get; set; }
+        public ExpandedModel ExpandedModel { get; set; }
+        public string TerminationReason { get; set; }
+    }
+
     public class CuttingPlaneSolver
     {
-
         private LPModel model;
-
-        public string[] ColumnNames { get; private set; }   // x1,x2,...,s1,...
-        public string[] RowNames { get; private set; }      // C1, C2, ..., Z
-        public double[,] CanonicalForm { get; private set; }
-        public List<double[,]> Iterations { get; private set; }
+        public int MaxIterations { get; set; } = 50;
 
         public CuttingPlaneSolver(LPModel m)
         {
             this.model = m;
-            this.Iterations = new List<double[,]>();
         }
 
-        public void Solve()
+        public CuttingPlaneResult Solve()
         {
-            CanonicalForm = BuildCanonicalForm();
-            Iterations.Add((double[,])CanonicalForm.Clone());
+            var result = new CuttingPlaneResult();
+            double lastObjectiveValue = double.MinValue;
 
-            // Demo: simulate iterations
-            for (int k = 0; k < 2; k++)
+            for (int i = 0; i < MaxIterations; i++)
             {
-                var tab = (double[,])Iterations[Iterations.Count - 1].Clone();
-                int rows = tab.GetLength(0);
-                int cols = tab.GetLength(1);
+                var expandedModel = ModelBuilder.BuildStandardForm(model);
+                var simplexSolver = new SimplexSolver(expandedModel);
+                var simplexResult = simplexSolver.Solve();
 
-                // Fake cutting plane adjustment: bump RHS
-                tab[rows - 1, cols - 1] += (k + 1);
-                Iterations.Add(tab);
+                var iterResult = new IterationResult
+                {
+                    Iteration = i + 1,
+                    ObjectiveValue = simplexResult.ObjectiveValue,
+                    PrimalSolution = simplexResult.Solution,
+                    IsOptimal = simplexResult.Status == SimplexStatus.Optimal,
+                    SimplexResult = simplexResult,
+                    ExpandedModel = expandedModel,
+                    TerminationReason = simplexResult.TerminationReason
+                };
+
+                if (simplexResult.Status != SimplexStatus.Optimal)
+                {
+                    result.Iterations.Add(iterResult);
+                    result.IsOptimal = false;
+                    return result;
+                }
+
+                if (i > 0 && Math.Abs(simplexResult.ObjectiveValue - lastObjectiveValue) < 1e-6)
+                {
+                    result.Iterations.Add(iterResult);
+                    result.IsOptimal = false; // Not converging
+                    return result;
+                }
+                lastObjectiveValue = simplexResult.ObjectiveValue;
+
+                bool isInteger = true;
+                int firstFractionalVarIndex = -1;
+                for (int j = 0; j < simplexResult.Solution.Length; j++)
+                {
+                    if (Math.Abs(simplexResult.Solution[j] - Math.Round(simplexResult.Solution[j])) > 1e-6)
+                    {
+                        isInteger = false;
+                        firstFractionalVarIndex = j;
+                        break;
+                    }
+                }
+
+                iterResult.IsInteger = isInteger;
+                result.Iterations.Add(iterResult);
+
+                if (isInteger)
+                {
+                    result.IsOptimal = true;
+                    result.IsInteger = true;
+                    result.Solution = simplexResult.Solution;
+                    result.ObjectiveValue = simplexResult.ObjectiveValue;
+                    return result;
+                }
+
+                var finalTableau = simplexResult.Log.Snapshots.Last().Tableau;
+                var finalBasis = simplexResult.Log.Snapshots.Last().Basis;
+                int cutRowIndex = -1;
+                for (int j = 0; j < finalBasis.Length; j++)
+                {
+                    if (finalBasis[j] == firstFractionalVarIndex)
+                    {
+                        cutRowIndex = j;
+                        break;
+                    }
+                }
+
+                if (cutRowIndex == -1)
+                {
+                    return result;
+                }
+
+                var cutCoeffs = new double[expandedModel.NumVars];
+                for (int j = 0; j < expandedModel.NumVars; j++)
+                {
+                    double val = finalTableau[cutRowIndex, j];
+                    cutCoeffs[j] = -(val - Math.Floor(val));
+                }
+                double rhs = finalTableau[cutRowIndex, finalTableau.GetLength(1) - 1];
+                double cutRhs = -(rhs - Math.Floor(rhs));
+
+                var finalCutCoeffs = new double[model.NumberOfVariables];
+                double finalCutRhs = cutRhs;
+
+                for (int j = 0; j < expandedModel.NumVars; j++)
+                {
+                    double coeff = cutCoeffs[j];
+                    if (Math.Abs(coeff) < 1e-6) continue;
+
+                    if (j < model.NumberOfVariables)
+                    {
+                        finalCutCoeffs[j] += coeff;
+                    }
+                    else if (expandedModel.SlackVarToConstraintMap.ContainsKey(j))
+                    {
+                        int constraintIndex = expandedModel.SlackVarToConstraintMap[j];
+                        var constraint = expandedModel.Constraints[constraintIndex];
+
+                        if (constraint.Type == ConstraintType.LessOrEqual)
+                        {
+                            finalCutRhs -= coeff * constraint.RightHandSide;
+                            for (int k = 0; k < constraint.Coefficients.Count; k++)
+                            {
+                                finalCutCoeffs[k] -= coeff * constraint.Coefficients[k];
+                            }
+                        }
+                        else // GreaterOrEqual
+                        {
+                            finalCutRhs += coeff * constraint.RightHandSide;
+                            for (int k = 0; k < constraint.Coefficients.Count; k++)
+                            {
+                                finalCutCoeffs[k] += coeff * constraint.Coefficients[k];
+                            }
+                        }
+                    }
+                }
+
+                var newConstraint = new Constraint
+                {
+                    Coefficients = finalCutCoeffs.ToList(),
+                    Type = ConstraintType.LessOrEqual,
+                    RightHandSide = finalCutRhs
+                };
+
+                string cutString = "";
+                for(int j=0; j<finalCutCoeffs.Length; j++)
+                {
+                    if(Math.Abs(finalCutCoeffs[j]) > 1e-6)
+                        cutString += $" {finalCutCoeffs[j]:F2}x{j + 1}";
+                }
+                cutString += $" <= {finalCutRhs:F2}";
+
+                iterResult.Cut = cutString.Trim();
+                model.Constraints.Add(newConstraint);
             }
-        }
 
-        private double[,] BuildCanonicalForm()
-        {
-            int numVars = model.NumberOfVariables;
-            int numConstraints = model.Constraints.Count;
-
-            var colNames = new List<string>();
-            for (int i = 0; i < numVars; i++)
-                colNames.Add("x" + (i + 1));
-
-            var rowNames = new List<string>();
-
-            int slackIdx = numVars;
-            foreach (var cons in model.Constraints)
-            {
-                if (cons.Type == ConstraintType.LessOrEqual)
-                {
-                    colNames.Add("s" + (colNames.Count - numVars + 1));
-                }
-                else if (cons.Type == ConstraintType.GreaterOrEqual)
-                {
-                    colNames.Add("e" + (colNames.Count - numVars + 1));
-                    colNames.Add("a" + (colNames.Count - numVars + 1));
-                }
-                else if (cons.Type == ConstraintType.Equal)
-                {
-                    colNames.Add("a" + (colNames.Count - numVars + 1));
-                }
-            }
-
-            colNames.Add("RHS");
-            ColumnNames = colNames.ToArray();
-
-            double[,] tableau = new double[numConstraints + 1, ColumnNames.Length];
-
-            int rowIdx = 0;
-            int extraVarIdx = numVars;
-            foreach (var cons in model.Constraints)
-            {
-                rowNames.Add("C" + (rowIdx + 1));
-
-                // Decision variable coefficients
-                for (int j = 0; j < numVars; j++)
-                    tableau[rowIdx, j] = cons.Coefficients[j];
-
-                // Slack/excess/artificial variables
-                if (cons.Type == ConstraintType.LessOrEqual)
-                {
-                    tableau[rowIdx, extraVarIdx++] = 1.0;
-                }
-                else if (cons.Type == ConstraintType.GreaterOrEqual)
-                {
-                    tableau[rowIdx, extraVarIdx++] = -1.0;
-                    tableau[rowIdx, extraVarIdx++] = 1.0; // artificial
-                }
-                else if (cons.Type == ConstraintType.Equal)
-                {
-                    tableau[rowIdx, extraVarIdx++] = 1.0; // artificial
-                }
-
-                // ? RHS is a real property
-                tableau[rowIdx, ColumnNames.Length - 1] = cons.RightHandSide;
-                rowIdx++;
-            }
-
-            // Objective row
-            rowNames.Add("Z");
-            for (int j = 0; j < numVars; j++)
-                tableau[numConstraints, j] = model.IsMaximization
-        ? -model.ObjectiveCoefficients[j]   // max ? negative in simplex
-        : model.ObjectiveCoefficients[j];
-            tableau[numConstraints, ColumnNames.Length - 1] = 0;
-
-            RowNames = rowNames.ToArray();
-            return tableau;
+            return result;
         }
     }
 }

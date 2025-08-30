@@ -36,12 +36,15 @@ namespace LinearProgrammingSolver
         public List<int> SlackVarCols = new List<int>();
         public List<int> ArtificialVarCols = new List<int>();
         public string[] VarNames = new string[0];
+        public Dictionary<int, int> SlackVarToConstraintMap = new Dictionary<int, int>();
+        public List<Constraint> Constraints = new List<Constraint>();
     }
 
-    internal static class ModelBuilder
+    public static class ModelBuilder
     {
         public static ExpandedModel BuildStandardForm(LPModel model)
         {
+            var em = new ExpandedModel();
             // Only support +, int, bin in this version
             for (int i = 0; i < model.SignRestrictions.Count; i++)
             {
@@ -89,6 +92,7 @@ namespace LinearProgrammingSolver
                     row = tmp;
                     row[col] = 1.0;
                     slackCols.Add(col);
+                    em.SlackVarToConstraintMap[col] = r;
                     colNames.Add("s" + slackCols.Count);
                     col++;
                 }
@@ -99,6 +103,7 @@ namespace LinearProgrammingSolver
                     row = tmp;
                     row[col] = -1.0;
                     slackCols.Add(col);
+                    em.SlackVarToConstraintMap[col] = r;
                     colNames.Add("e" + slackCols.Count);
                     col++;
                     row[col] = 1.0;
@@ -135,8 +140,6 @@ namespace LinearProgrammingSolver
             var cvec = new double[totalCols];
             double sign = model.IsMaximization ? 1.0 : -1.0;
             for (int j = 0; j < model.ObjectiveCoefficients.Count; j++) cvec[j] = sign * model.ObjectiveCoefficients[j];
-
-            var em = new ExpandedModel();
             em.IsMaximization = true;
             em.NumVars = totalCols;
             em.NumOrigVars = n;
@@ -158,6 +161,7 @@ namespace LinearProgrammingSolver
             em.SlackVarCols = slackCols;
             em.ArtificialVarCols = artificialCols;
             em.VarNames = colNames.ToArray();
+            em.Constraints = constraints;
             return em;
         }
 
@@ -198,9 +202,10 @@ namespace LinearProgrammingSolver
         public double ObjectiveValue;
         public double[] Solution = new double[0];
         public SimplexLog Log = new SimplexLog();
+        public string TerminationReason { get; set; }
     }
 
-    internal class SimplexSolver
+    public class SimplexSolver
     {
         private readonly ExpandedModel _em;
         private readonly int _m;
@@ -363,6 +368,7 @@ namespace LinearProgrammingSolver
                 {
                     var lim = new SimplexResult();
                     lim.Status = SimplexStatus.IterationLimit;
+                    lim.TerminationReason = "Iteration limit reached.";
                     lim.Log = log;
                     return lim;
                 }
@@ -381,6 +387,7 @@ namespace LinearProgrammingSolver
                 {
                     var opt = new SimplexResult();
                     opt.Status = SimplexStatus.Optimal;
+                    opt.TerminationReason = "Optimal solution found.";
                     opt.Log = log;
                     return opt;
                 }
@@ -410,6 +417,7 @@ namespace LinearProgrammingSolver
                 {
                     var unb = new SimplexResult();
                     unb.Status = SimplexStatus.Unbounded;
+                    unb.TerminationReason = "Unbounded solution.";
                     unb.Log = log;
                     return unb;
                 }
