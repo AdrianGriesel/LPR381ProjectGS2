@@ -84,5 +84,10 @@ namespace LPR381ProjectGS2
             frmCuttingPlane frmCuttingPlane = new frmCuttingPlane();
             frmCuttingPlane.ShowDialog();
         }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

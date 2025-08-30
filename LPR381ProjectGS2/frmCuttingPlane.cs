@@ -96,5 +96,15 @@ namespace LPR381ProjectGS2
                 tabIterations.TabPages.Add(tabPage);
             }
         }
+
+        private void tabIterations_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void frmCuttingPlane_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

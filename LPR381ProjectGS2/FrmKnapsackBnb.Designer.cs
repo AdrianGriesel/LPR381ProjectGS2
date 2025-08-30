@@ -38,40 +38,45 @@
             this.txtCapacity = new System.Windows.Forms.TextBox();
             this.txtBestValue = new System.Windows.Forms.TextBox();
             this.txtItemsTaken = new System.Windows.Forms.TextBox();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.gridIterations)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblCapacity
             // 
             this.lblCapacity.AutoSize = true;
-            this.lblCapacity.Location = new System.Drawing.Point(95, 153);
+            this.lblCapacity.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblCapacity.Location = new System.Drawing.Point(30, 26);
             this.lblCapacity.Name = "lblCapacity";
-            this.lblCapacity.Size = new System.Drawing.Size(60, 16);
+            this.lblCapacity.Size = new System.Drawing.Size(82, 20);
             this.lblCapacity.TabIndex = 0;
             this.lblCapacity.Text = "Capacity";
             // 
             // lblBest
             // 
             this.lblBest.AutoSize = true;
-            this.lblBest.Location = new System.Drawing.Point(95, 201);
+            this.lblBest.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblBest.Location = new System.Drawing.Point(30, 74);
             this.lblBest.Name = "lblBest";
-            this.lblBest.Size = new System.Drawing.Size(78, 16);
+            this.lblBest.Size = new System.Drawing.Size(113, 20);
             this.lblBest.TabIndex = 1;
             this.lblBest.Text = "Best Value: ";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(95, 251);
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(30, 124);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(84, 16);
+            this.label3.Size = new System.Drawing.Size(117, 20);
             this.label3.TabIndex = 2;
             this.label3.Text = "Items Taken:";
             // 
             // gridIterations
             // 
             this.gridIterations.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridIterations.Location = new System.Drawing.Point(809, 121);
+            this.gridIterations.Location = new System.Drawing.Point(33, 182);
             this.gridIterations.Name = "gridIterations";
             this.gridIterations.RowHeadersWidth = 51;
             this.gridIterations.RowTemplate.Height = 24;
@@ -80,9 +85,10 @@
             // 
             // btnSolve
             // 
-            this.btnSolve.Location = new System.Drawing.Point(809, 384);
+            this.btnSolve.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSolve.Location = new System.Drawing.Point(33, 470);
             this.btnSolve.Name = "btnSolve";
-            this.btnSolve.Size = new System.Drawing.Size(75, 23);
+            this.btnSolve.Size = new System.Drawing.Size(153, 35);
             this.btnSolve.TabIndex = 4;
             this.btnSolve.Text = "Solve ";
             this.btnSolve.UseVisualStyleBackColor = true;
@@ -90,9 +96,10 @@
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(921, 384);
+            this.btnExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExport.Location = new System.Drawing.Point(210, 470);
             this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(75, 23);
+            this.btnExport.Size = new System.Drawing.Size(164, 35);
             this.btnExport.TabIndex = 5;
             this.btnExport.Text = "Export...";
             this.btnExport.UseVisualStyleBackColor = true;
@@ -100,9 +107,10 @@
             // 
             // btnClose
             // 
-            this.btnClose.Location = new System.Drawing.Point(1045, 384);
+            this.btnClose.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnClose.Location = new System.Drawing.Point(396, 470);
             this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(75, 23);
+            this.btnClose.Size = new System.Drawing.Size(165, 35);
             this.btnClose.TabIndex = 6;
             this.btnClose.Text = "Close";
             this.btnClose.UseVisualStyleBackColor = true;
@@ -110,49 +118,63 @@
             // 
             // txtCapacity
             // 
-            this.txtCapacity.Location = new System.Drawing.Point(219, 147);
+            this.txtCapacity.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtCapacity.Location = new System.Drawing.Point(154, 20);
             this.txtCapacity.Name = "txtCapacity";
             this.txtCapacity.ReadOnly = true;
-            this.txtCapacity.Size = new System.Drawing.Size(176, 22);
+            this.txtCapacity.Size = new System.Drawing.Size(407, 27);
             this.txtCapacity.TabIndex = 7;
             // 
             // txtBestValue
             // 
-            this.txtBestValue.Location = new System.Drawing.Point(219, 201);
+            this.txtBestValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtBestValue.Location = new System.Drawing.Point(154, 74);
             this.txtBestValue.Name = "txtBestValue";
             this.txtBestValue.ReadOnly = true;
-            this.txtBestValue.Size = new System.Drawing.Size(176, 22);
+            this.txtBestValue.Size = new System.Drawing.Size(407, 27);
             this.txtBestValue.TabIndex = 8;
             // 
             // txtItemsTaken
             // 
-            this.txtItemsTaken.Location = new System.Drawing.Point(219, 251);
+            this.txtItemsTaken.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtItemsTaken.Location = new System.Drawing.Point(154, 124);
             this.txtItemsTaken.Name = "txtItemsTaken";
             this.txtItemsTaken.ReadOnly = true;
-            this.txtItemsTaken.Size = new System.Drawing.Size(176, 22);
+            this.txtItemsTaken.Size = new System.Drawing.Size(407, 27);
             this.txtItemsTaken.TabIndex = 9;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.panel1.Controls.Add(this.btnClose);
+            this.panel1.Controls.Add(this.txtItemsTaken);
+            this.panel1.Controls.Add(this.btnExport);
+            this.panel1.Controls.Add(this.btnSolve);
+            this.panel1.Controls.Add(this.gridIterations);
+            this.panel1.Controls.Add(this.txtBestValue);
+            this.panel1.Controls.Add(this.txtCapacity);
+            this.panel1.Controls.Add(this.lblCapacity);
+            this.panel1.Controls.Add(this.lblBest);
+            this.panel1.Controls.Add(this.label3);
+            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(641, 538);
+            this.panel1.TabIndex = 15;
             // 
             // FrmKnapsackBnb
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1410, 562);
-            this.Controls.Add(this.txtItemsTaken);
-            this.Controls.Add(this.txtBestValue);
-            this.Controls.Add(this.txtCapacity);
-            this.Controls.Add(this.btnClose);
-            this.Controls.Add(this.btnExport);
-            this.Controls.Add(this.btnSolve);
-            this.Controls.Add(this.gridIterations);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.lblBest);
-            this.Controls.Add(this.lblCapacity);
+            this.BackColor = System.Drawing.SystemColors.Menu;
+            this.ClientSize = new System.Drawing.Size(680, 559);
+            this.Controls.Add(this.panel1);
             this.Name = "FrmKnapsackBnb";
             this.Text = "FrmKnapsackBnb";
             this.Load += new System.EventHandler(this.FrmKnapsackBnb_Load);
             ((System.ComponentModel.ISupportInitialize)(this.gridIterations)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -168,5 +190,6 @@
         private System.Windows.Forms.TextBox txtCapacity;
         private System.Windows.Forms.TextBox txtBestValue;
         private System.Windows.Forms.TextBox txtItemsTaken;
+        private System.Windows.Forms.Panel panel1;
     }
 }
