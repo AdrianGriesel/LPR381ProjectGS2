@@ -47,7 +47,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BranchAndBoundSolver.cs" />
+    <Compile Include="BuildDual.cs" />
     <Compile Include="CuttingPlaneSolver.cs" />
+    <Compile Include="DualBuilder.cs" />
     <Compile Include="frmBranchAndBound.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -66,11 +68,6 @@
     <Compile Include="FrmKnapsackBnb.Designer.cs">
       <DependentUpon>FrmKnapsackBnb.cs</DependentUpon>
     </Compile>
-    <Compile Include="Application\SensitivityWriter.cs" />
-    <Compile Include="Domain\Analysis\BuildDual.cs" />
-    <Compile Include="Domain\Analysis\DualBuilder.cs" />
-    <Compile Include="Domain\Analysis\SensitivityAnalyzer.cs" />
-    <Compile Include="Domain\Analysis\SensitivityReport.cs" />
     <Compile Include="frmPrimal.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -89,19 +86,22 @@
     <Compile Include="frmSimplex.Designer.cs">
       <DependentUpon>frmSimplex.cs</DependentUpon>
     </Compile>
-    <Compile Include="Domain\Algorithms\KnapSackSolver.cs" />
-    <Compile Include="Application\OutputWriter.cs" />
-    <Compile Include="Domain\Models\SimplexResult.cs" />
-    <Compile Include="Application\Parsing\LPInputParser.cs" />
+    <Compile Include="KnapSackSolver.cs" />
+    <Compile Include="LPInputParser.cs" />
     <Compile Include="Main Form.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Main Form.Designer.cs">
       <DependentUpon>Main Form.cs</DependentUpon>
     </Compile>
-    <Compile Include="Domain\Algorithms\PrimalSimplexSolver.cs" />
+    <Compile Include="OutputWriter.cs" />
+    <Compile Include="PrimalSimplexSolver.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SensitivityAnalyzer.cs" />
+    <Compile Include="SensitivityReport.cs" />
+    <Compile Include="SensitivityWriter.cs" />
+    <Compile Include="SimplexResult.cs" />
     <Compile Include="TableauSnapshot.cs" />
     <EmbeddedResource Include="frmBranchAndBound.resx">
       <DependentUpon>frmBranchAndBound.cs</DependentUpon>
@@ -146,6 +146,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -34,12 +34,13 @@
             this.btnBranchAndBound = new System.Windows.Forms.Button();
             this.btnCuttingPlane = new System.Windows.Forms.Button();
             this.btnSensitivityAnalysis = new System.Windows.Forms.Button();
+            this.btnSensitvityAnalysis = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSimplex
             // 
             this.btnSimplex.Location = new System.Drawing.Point(10, 11);
-            this.btnSimplex.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSimplex.Margin = new System.Windows.Forms.Padding(2);
             this.btnSimplex.Name = "btnSimplex";
             this.btnSimplex.Size = new System.Drawing.Size(155, 34);
             this.btnSimplex.TabIndex = 0;
@@ -56,16 +57,6 @@
             this.btnPrimalSolver.Text = "Go To Primal Simplex Solver";
             this.btnPrimalSolver.UseVisualStyleBackColor = true;
             this.btnPrimalSolver.Click += new System.EventHandler(this.btnPrimalSolver_Click);
-            // 
-            // btnSensitivityAnalysis
-            // 
-            this.btnSensitivityAnalysis.Location = new System.Drawing.Point(10, 96);
-            this.btnSensitivityAnalysis.Name = "btnSensitivityAnalysis";
-            this.btnSensitivityAnalysis.Size = new System.Drawing.Size(155, 42);
-            this.btnSensitivityAnalysis.TabIndex = 2;
-            this.btnSensitivityAnalysis.Text = "Go To Sensitivity Analysis";
-            this.btnSensitivityAnalysis.UseVisualStyleBackColor = true;
-            this.btnSensitivityAnalysis.Click += new System.EventHandler(this.btnSensitivityAnalysis_Click);
             // 
             // btnKnapsackBnb
             // 
@@ -97,19 +88,39 @@
             this.btnCuttingPlane.UseVisualStyleBackColor = true;
             this.btnCuttingPlane.Click += new System.EventHandler(this.btnCuttingPlane_Click);
             // 
+            // btnSensitivityAnalysis
+            // 
+            this.btnSensitivityAnalysis.Location = new System.Drawing.Point(10, 96);
+            this.btnSensitivityAnalysis.Name = "btnSensitivityAnalysis";
+            this.btnSensitivityAnalysis.Size = new System.Drawing.Size(155, 42);
+            this.btnSensitivityAnalysis.TabIndex = 2;
+            this.btnSensitivityAnalysis.Text = "Go To Sensitivity Analysis";
+            this.btnSensitivityAnalysis.UseVisualStyleBackColor = true;
+            this.btnSensitivityAnalysis.Click += new System.EventHandler(this.btnSensitivityAnalysis_Click);
+            // 
+            // btnSensitvityAnalysis
+            // 
+            this.btnSensitvityAnalysis.Location = new System.Drawing.Point(12, 240);
+            this.btnSensitvityAnalysis.Name = "btnSensitvityAnalysis";
+            this.btnSensitvityAnalysis.Size = new System.Drawing.Size(153, 40);
+            this.btnSensitvityAnalysis.TabIndex = 5;
+            this.btnSensitvityAnalysis.Text = "Go to Sensitivity Analysis";
+            this.btnSensitvityAnalysis.UseVisualStyleBackColor = true;
+            this.btnSensitvityAnalysis.Click += new System.EventHandler(this.btnSensitvityAnalysis_Click);
+            // 
             // Main_Form
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(600, 366);
+            this.Controls.Add(this.btnSensitvityAnalysis);
             this.Controls.Add(this.btnCuttingPlane);
             this.Controls.Add(this.btnBranchAndBound);
             this.Controls.Add(this.btnKnapsackBnb);
-            this.ClientSize = new System.Drawing.Size(600, 366);
             this.Controls.Add(this.btnSensitivityAnalysis);
             this.Controls.Add(this.btnPrimalSolver);
             this.Controls.Add(this.btnSimplex);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "Main_Form";
             this.Text = "Main_Form";
             this.ResumeLayout(false);
@@ -124,5 +135,6 @@
         private System.Windows.Forms.Button btnBranchAndBound;
         private System.Windows.Forms.Button btnCuttingPlane;
         private System.Windows.Forms.Button btnSensitivityAnalysis;
+        private System.Windows.Forms.Button btnSensitvityAnalysis;
     }
 }

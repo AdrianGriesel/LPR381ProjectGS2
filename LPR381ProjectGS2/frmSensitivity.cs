@@ -197,21 +197,42 @@ namespace LPR381ProjectGS2.Presentation
             btnExport.Enabled = btnAnalyze.Enabled;
         }
 
-        private void btnAnalyze_Click(object sender, EventArgs e)
+            private void btnAnalyze_Click(object sender, EventArgs e)
         {
             var analyzer = new SensitivityAnalyzer();
             _report = analyzer.Analyze(_primalModel, _primalResult, _dualModel, _dualResult, (double)numTolerance.Value);
 
-            // shadow prices grid
+            // --- Shadow Prices Grid ---
+            gridShadowPrices.Columns.Clear();
             gridShadowPrices.Rows.Clear();
+            gridShadowPrices.Columns.Add("Constraint", "Constraint");
+            gridShadowPrices.Columns.Add("Value", "Shadow Price");
+            gridShadowPrices.Columns.Add("Note", "Note");
+
             foreach (var kv in _report.ShadowPrices)
-                gridShadowPrices.Rows.Add(kv.Key, kv.Value.ToString("0.000"), "per unit rhs");
+            {
+                int r = gridShadowPrices.Rows.Add();
+                gridShadowPrices.Rows[r].Cells[0].Value = kv.Key;
+                gridShadowPrices.Rows[r].Cells[1].Value = kv.Value.ToString("0.000");
+                gridShadowPrices.Rows[r].Cells[2].Value = "per unit rhs";
+            }
 
-            // reduced costs grid
+            // --- Reduced Costs Grid ---
+            gridReducedCosts.Columns.Clear();
             gridReducedCosts.Rows.Clear();
-            foreach (var kv in _report.ReducedCosts)
-                gridReducedCosts.Rows.Add(kv.Key, kv.Value.value.ToString("0.000"), kv.Value.isBasic ? "yes" : "no");
+            gridReducedCosts.Columns.Add("Variable", "Variable");
+            gridReducedCosts.Columns.Add("Value", "Reduced Cost");
+            gridReducedCosts.Columns.Add("Basic", "Basic?");
 
+            foreach (var kv in _report.ReducedCosts)
+            {
+                int r = gridReducedCosts.Rows.Add();
+                gridReducedCosts.Rows[r].Cells[0].Value = kv.Key;
+                gridReducedCosts.Rows[r].Cells[1].Value = kv.Value.value.ToString("0.000");
+                gridReducedCosts.Rows[r].Cells[2].Value = kv.Value.isBasic ? "yes" : "no";
+            }
+
+            // --- Report Preview ---
             BuildReportPreview();
             lblStatus.Text = "analysis complete.";
         }
@@ -351,6 +372,10 @@ namespace LPR381ProjectGS2.Presentation
             return w;
         }
 
+        private void gridObjRanges_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
     }
 }
 

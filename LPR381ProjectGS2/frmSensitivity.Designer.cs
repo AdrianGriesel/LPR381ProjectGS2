@@ -39,31 +39,25 @@
             this.prog = new System.Windows.Forms.ProgressBar();
             this.tabMain = new System.Windows.Forms.TabControl();
             this.Overview = new System.Windows.Forms.TabPage();
-            this.ShadowPricesReducedCosts = new System.Windows.Forms.TabPage();
-            this.Ranges = new System.Windows.Forms.TabPage();
-            this.Report = new System.Windows.Forms.TabPage();
-            this.grpPrimal = new System.Windows.Forms.GroupBox();
-            this.gridPrimalTableau = new System.Windows.Forms.DataGridView();
-            this.lblPrimalObj = new System.Windows.Forms.Label();
             this.grpDual = new System.Windows.Forms.GroupBox();
-            this.lblDualityCheck = new System.Windows.Forms.Label();
-            this.lstPrimalIters = new System.Windows.Forms.ListBox();
-            this.gridDualTableau = new System.Windows.Forms.DataGridView();
             this.lblDualObj = new System.Windows.Forms.Label();
-            this.gridShadowPrices = new System.Windows.Forms.DataGridView();
-            this.constraint = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.yvalue = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.units = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.gridDualTableau = new System.Windows.Forms.DataGridView();
+            this.lblDualityCheck = new System.Windows.Forms.Label();
+            this.grpPrimal = new System.Windows.Forms.GroupBox();
+            this.lblPrimalObj = new System.Windows.Forms.Label();
+            this.lstPrimalIters = new System.Windows.Forms.ListBox();
+            this.gridPrimalTableau = new System.Windows.Forms.DataGridView();
+            this.ShadowPricesReducedCosts = new System.Windows.Forms.TabPage();
             this.gridReducedCosts = new System.Windows.Forms.DataGridView();
             this.variable = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.reducedCost = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.basic = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.grpObjRanges = new System.Windows.Forms.GroupBox();
-            this.gridObjRanges = new System.Windows.Forms.DataGridView();
-            this.variableRange = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cj = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.allowDecrease = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.allowIncrease = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.gridShadowPrices = new System.Windows.Forms.DataGridView();
+            this.constraint = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.yvalue = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.units = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Ranges = new System.Windows.Forms.TabPage();
+            this.lblTolerance = new System.Windows.Forms.Label();
             this.grpRhsRanges = new System.Windows.Forms.GroupBox();
             this.gridRhsRanges = new System.Windows.Forms.DataGridView();
             this.dataGridViewTextBoxColumn1 = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -71,26 +65,32 @@
             this.bi = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.allowableDecrease = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.numTolerance = new System.Windows.Forms.NumericUpDown();
-            this.lblTolerance = new System.Windows.Forms.Label();
-            this.txtReportPreview = new System.Windows.Forms.RichTextBox();
+            this.grpObjRanges = new System.Windows.Forms.GroupBox();
+            this.gridObjRanges = new System.Windows.Forms.DataGridView();
+            this.variableRange = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cj = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.allowDecrease = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.allowIncrease = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Report = new System.Windows.Forms.TabPage();
             this.btnCopyReport = new System.Windows.Forms.Button();
+            this.txtReportPreview = new System.Windows.Forms.RichTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tabMain.SuspendLayout();
             this.Overview.SuspendLayout();
-            this.ShadowPricesReducedCosts.SuspendLayout();
-            this.Ranges.SuspendLayout();
-            this.Report.SuspendLayout();
-            this.grpPrimal.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridPrimalTableau)).BeginInit();
             this.grpDual.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDualTableau)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridShadowPrices)).BeginInit();
+            this.grpPrimal.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPrimalTableau)).BeginInit();
+            this.ShadowPricesReducedCosts.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridReducedCosts)).BeginInit();
-            this.grpObjRanges.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridObjRanges)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridShadowPrices)).BeginInit();
+            this.Ranges.SuspendLayout();
             this.grpRhsRanges.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridRhsRanges)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTolerance)).BeginInit();
+            this.grpObjRanges.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridObjRanges)).BeginInit();
+            this.Report.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOpen
@@ -203,41 +203,48 @@
             this.Overview.Text = "Overview";
             this.Overview.UseVisualStyleBackColor = true;
             // 
-            // ShadowPricesReducedCosts
+            // grpDual
             // 
-            this.ShadowPricesReducedCosts.Controls.Add(this.gridReducedCosts);
-            this.ShadowPricesReducedCosts.Controls.Add(this.gridShadowPrices);
-            this.ShadowPricesReducedCosts.Location = new System.Drawing.Point(4, 25);
-            this.ShadowPricesReducedCosts.Name = "ShadowPricesReducedCosts";
-            this.ShadowPricesReducedCosts.Padding = new System.Windows.Forms.Padding(3);
-            this.ShadowPricesReducedCosts.Size = new System.Drawing.Size(950, 350);
-            this.ShadowPricesReducedCosts.TabIndex = 1;
-            this.ShadowPricesReducedCosts.Text = "Shadow Prices & Reduced Costs";
-            this.ShadowPricesReducedCosts.UseVisualStyleBackColor = true;
+            this.grpDual.Controls.Add(this.lblDualObj);
+            this.grpDual.Controls.Add(this.gridDualTableau);
+            this.grpDual.Controls.Add(this.lblDualityCheck);
+            this.grpDual.Location = new System.Drawing.Point(528, 43);
+            this.grpDual.Name = "grpDual";
+            this.grpDual.Size = new System.Drawing.Size(311, 237);
+            this.grpDual.TabIndex = 4;
+            this.grpDual.TabStop = false;
+            this.grpDual.Text = "Dual Simplex";
             // 
-            // Ranges
+            // lblDualObj
             // 
-            this.Ranges.Controls.Add(this.lblTolerance);
-            this.Ranges.Controls.Add(this.grpRhsRanges);
-            this.Ranges.Controls.Add(this.numTolerance);
-            this.Ranges.Controls.Add(this.grpObjRanges);
-            this.Ranges.Location = new System.Drawing.Point(4, 25);
-            this.Ranges.Name = "Ranges";
-            this.Ranges.Size = new System.Drawing.Size(950, 350);
-            this.Ranges.TabIndex = 2;
-            this.Ranges.Text = "Allowable Ranges";
-            this.Ranges.UseVisualStyleBackColor = true;
+            this.lblDualObj.AutoSize = true;
+            this.lblDualObj.Location = new System.Drawing.Point(20, 47);
+            this.lblDualObj.Name = "lblDualObj";
+            this.lblDualObj.Size = new System.Drawing.Size(66, 13);
+            this.lblDualObj.TabIndex = 6;
+            this.lblDualObj.Text = "w* (dual) = …";
             // 
-            // Report
+            // gridDualTableau
             // 
-            this.Report.Controls.Add(this.btnCopyReport);
-            this.Report.Controls.Add(this.txtReportPreview);
-            this.Report.Location = new System.Drawing.Point(4, 25);
-            this.Report.Name = "Report";
-            this.Report.Size = new System.Drawing.Size(950, 350);
-            this.Report.TabIndex = 3;
-            this.Report.Text = "Report";
-            this.Report.UseVisualStyleBackColor = true;
+            this.gridDualTableau.AllowUserToAddRows = false;
+            this.gridDualTableau.AllowUserToDeleteRows = false;
+            this.gridDualTableau.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.gridDualTableau.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridDualTableau.Location = new System.Drawing.Point(23, 84);
+            this.gridDualTableau.Name = "gridDualTableau";
+            this.gridDualTableau.ReadOnly = true;
+            this.gridDualTableau.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridDualTableau.Size = new System.Drawing.Size(268, 106);
+            this.gridDualTableau.TabIndex = 5;
+            // 
+            // lblDualityCheck
+            // 
+            this.lblDualityCheck.AutoSize = true;
+            this.lblDualityCheck.Location = new System.Drawing.Point(20, 60);
+            this.lblDualityCheck.Name = "lblDualityCheck";
+            this.lblDualityCheck.Size = new System.Drawing.Size(196, 13);
+            this.lblDualityCheck.TabIndex = 4;
+            this.lblDualityCheck.Text = "strong duality: passed/failed (|z*−w*|≤tol)";
             // 
             // grpPrimal
             // 
@@ -250,6 +257,24 @@
             this.grpPrimal.TabIndex = 0;
             this.grpPrimal.TabStop = false;
             this.grpPrimal.Text = "Primal Simplex";
+            // 
+            // lblPrimalObj
+            // 
+            this.lblPrimalObj.AutoSize = true;
+            this.lblPrimalObj.Location = new System.Drawing.Point(22, 59);
+            this.lblPrimalObj.Name = "lblPrimalObj";
+            this.lblPrimalObj.Size = new System.Drawing.Size(70, 13);
+            this.lblPrimalObj.TabIndex = 1;
+            this.lblPrimalObj.Text = "z* (primal) = …";
+            // 
+            // lstPrimalIters
+            // 
+            this.lstPrimalIters.FormattingEnabled = true;
+            this.lstPrimalIters.Location = new System.Drawing.Point(154, 19);
+            this.lstPrimalIters.Name = "lstPrimalIters";
+            this.lstPrimalIters.Size = new System.Drawing.Size(120, 95);
+            this.lstPrimalIters.TabIndex = 2;
+            this.lstPrimalIters.SelectedIndexChanged += new System.EventHandler(this.lstPrimalIters_SelectedIndexChanged);
             // 
             // gridPrimalTableau
             // 
@@ -265,104 +290,17 @@
             this.gridPrimalTableau.TabIndex = 0;
             this.gridPrimalTableau.SelectionChanged += new System.EventHandler(this.gridPrimalTableau_SelectionChanged);
             // 
-            // lblPrimalObj
+            // ShadowPricesReducedCosts
             // 
-            this.lblPrimalObj.AutoSize = true;
-            this.lblPrimalObj.Location = new System.Drawing.Point(22, 59);
-            this.lblPrimalObj.Name = "lblPrimalObj";
-            this.lblPrimalObj.Size = new System.Drawing.Size(70, 13);
-            this.lblPrimalObj.TabIndex = 1;
-            this.lblPrimalObj.Text = "z* (primal) = …";
-            // 
-            // grpDual
-            // 
-            this.grpDual.Controls.Add(this.lblDualObj);
-            this.grpDual.Controls.Add(this.gridDualTableau);
-            this.grpDual.Controls.Add(this.lblDualityCheck);
-            this.grpDual.Location = new System.Drawing.Point(528, 43);
-            this.grpDual.Name = "grpDual";
-            this.grpDual.Size = new System.Drawing.Size(311, 237);
-            this.grpDual.TabIndex = 4;
-            this.grpDual.TabStop = false;
-            this.grpDual.Text = "Dual Simplex";
-            // 
-            // lblDualityCheck
-            // 
-            this.lblDualityCheck.AutoSize = true;
-            this.lblDualityCheck.Location = new System.Drawing.Point(20, 60);
-            this.lblDualityCheck.Name = "lblDualityCheck";
-            this.lblDualityCheck.Size = new System.Drawing.Size(196, 13);
-            this.lblDualityCheck.TabIndex = 4;
-            this.lblDualityCheck.Text = "strong duality: passed/failed (|z*−w*|≤tol)";
-            // 
-            // lstPrimalIters
-            // 
-            this.lstPrimalIters.FormattingEnabled = true;
-            this.lstPrimalIters.Location = new System.Drawing.Point(154, 19);
-            this.lstPrimalIters.Name = "lstPrimalIters";
-            this.lstPrimalIters.Size = new System.Drawing.Size(120, 95);
-            this.lstPrimalIters.TabIndex = 2;
-            this.lstPrimalIters.SelectedIndexChanged += new System.EventHandler(this.lstPrimalIters_SelectedIndexChanged);
-            // 
-            // gridDualTableau
-            // 
-            this.gridDualTableau.AllowUserToAddRows = false;
-            this.gridDualTableau.AllowUserToDeleteRows = false;
-            this.gridDualTableau.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.gridDualTableau.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridDualTableau.Location = new System.Drawing.Point(23, 84);
-            this.gridDualTableau.Name = "gridDualTableau";
-            this.gridDualTableau.ReadOnly = true;
-            this.gridDualTableau.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridDualTableau.Size = new System.Drawing.Size(268, 106);
-            this.gridDualTableau.TabIndex = 5;
-            // 
-            // lblDualObj
-            // 
-            this.lblDualObj.AutoSize = true;
-            this.lblDualObj.Location = new System.Drawing.Point(20, 47);
-            this.lblDualObj.Name = "lblDualObj";
-            this.lblDualObj.Size = new System.Drawing.Size(66, 13);
-            this.lblDualObj.TabIndex = 6;
-            this.lblDualObj.Text = "w* (dual) = …";
-            // 
-            // gridShadowPrices
-            // 
-            this.gridShadowPrices.AllowUserToAddRows = false;
-            this.gridShadowPrices.AllowUserToDeleteRows = false;
-            this.gridShadowPrices.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.gridShadowPrices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridShadowPrices.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.constraint,
-            this.yvalue,
-            this.units});
-            this.gridShadowPrices.Location = new System.Drawing.Point(91, 20);
-            this.gridShadowPrices.Name = "gridShadowPrices";
-            this.gridShadowPrices.ReadOnly = true;
-            this.gridShadowPrices.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridShadowPrices.Size = new System.Drawing.Size(349, 255);
-            this.gridShadowPrices.TabIndex = 0;
-            // 
-            // constraint
-            // 
-            this.constraint.HeaderText = "Constraint";
-            this.constraint.Name = "constraint";
-            this.constraint.ReadOnly = true;
-            this.constraint.Width = 79;
-            // 
-            // yvalue
-            // 
-            this.yvalue.HeaderText = "Y value (Shadow Price)";
-            this.yvalue.Name = "yvalue";
-            this.yvalue.ReadOnly = true;
-            this.yvalue.Width = 96;
-            // 
-            // units
-            // 
-            this.units.HeaderText = "Units";
-            this.units.Name = "units";
-            this.units.ReadOnly = true;
-            this.units.Width = 56;
+            this.ShadowPricesReducedCosts.Controls.Add(this.gridReducedCosts);
+            this.ShadowPricesReducedCosts.Controls.Add(this.gridShadowPrices);
+            this.ShadowPricesReducedCosts.Location = new System.Drawing.Point(4, 25);
+            this.ShadowPricesReducedCosts.Name = "ShadowPricesReducedCosts";
+            this.ShadowPricesReducedCosts.Padding = new System.Windows.Forms.Padding(3);
+            this.ShadowPricesReducedCosts.Size = new System.Drawing.Size(950, 350);
+            this.ShadowPricesReducedCosts.TabIndex = 1;
+            this.ShadowPricesReducedCosts.Text = "Shadow Prices & Reduced Costs";
+            this.ShadowPricesReducedCosts.UseVisualStyleBackColor = true;
             // 
             // gridReducedCosts
             // 
@@ -402,61 +340,65 @@
             this.basic.ReadOnly = true;
             this.basic.Width = 96;
             // 
-            // grpObjRanges
+            // gridShadowPrices
             // 
-            this.grpObjRanges.Controls.Add(this.gridObjRanges);
-            this.grpObjRanges.Location = new System.Drawing.Point(3, 18);
-            this.grpObjRanges.Name = "grpObjRanges";
-            this.grpObjRanges.Size = new System.Drawing.Size(467, 268);
-            this.grpObjRanges.TabIndex = 0;
-            this.grpObjRanges.TabStop = false;
-            this.grpObjRanges.Text = "Objective Coefficient Ranges";
+            this.gridShadowPrices.AllowUserToAddRows = false;
+            this.gridShadowPrices.AllowUserToDeleteRows = false;
+            this.gridShadowPrices.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.gridShadowPrices.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridShadowPrices.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.constraint,
+            this.yvalue,
+            this.units});
+            this.gridShadowPrices.Location = new System.Drawing.Point(91, 20);
+            this.gridShadowPrices.Name = "gridShadowPrices";
+            this.gridShadowPrices.ReadOnly = true;
+            this.gridShadowPrices.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridShadowPrices.Size = new System.Drawing.Size(349, 255);
+            this.gridShadowPrices.TabIndex = 0;
             // 
-            // gridObjRanges
+            // constraint
             // 
-            this.gridObjRanges.AllowUserToAddRows = false;
-            this.gridObjRanges.AllowUserToDeleteRows = false;
-            this.gridObjRanges.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
-            this.gridObjRanges.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridObjRanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.variableRange,
-            this.cj,
-            this.allowDecrease,
-            this.allowIncrease});
-            this.gridObjRanges.Location = new System.Drawing.Point(8, 20);
-            this.gridObjRanges.Name = "gridObjRanges";
-            this.gridObjRanges.ReadOnly = true;
-            this.gridObjRanges.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.gridObjRanges.Size = new System.Drawing.Size(448, 186);
-            this.gridObjRanges.TabIndex = 0;
+            this.constraint.HeaderText = "Constraint";
+            this.constraint.Name = "constraint";
+            this.constraint.ReadOnly = true;
+            this.constraint.Width = 79;
             // 
-            // variableRange
+            // yvalue
             // 
-            this.variableRange.HeaderText = "Variable";
-            this.variableRange.Name = "variableRange";
-            this.variableRange.ReadOnly = true;
-            this.variableRange.Width = 70;
+            this.yvalue.HeaderText = "Y value (Shadow Price)";
+            this.yvalue.Name = "yvalue";
+            this.yvalue.ReadOnly = true;
+            this.yvalue.Width = 106;
             // 
-            // cj
+            // units
             // 
-            this.cj.HeaderText = "c_j";
-            this.cj.Name = "cj";
-            this.cj.ReadOnly = true;
-            this.cj.Width = 46;
+            this.units.HeaderText = "Units";
+            this.units.Name = "units";
+            this.units.ReadOnly = true;
+            this.units.Width = 56;
             // 
-            // allowDecrease
+            // Ranges
             // 
-            this.allowDecrease.HeaderText = "Allowable Decrease";
-            this.allowDecrease.Name = "allowDecrease";
-            this.allowDecrease.ReadOnly = true;
-            this.allowDecrease.Width = 115;
+            this.Ranges.Controls.Add(this.lblTolerance);
+            this.Ranges.Controls.Add(this.grpRhsRanges);
+            this.Ranges.Controls.Add(this.numTolerance);
+            this.Ranges.Controls.Add(this.grpObjRanges);
+            this.Ranges.Location = new System.Drawing.Point(4, 25);
+            this.Ranges.Name = "Ranges";
+            this.Ranges.Size = new System.Drawing.Size(950, 350);
+            this.Ranges.TabIndex = 2;
+            this.Ranges.Text = "Allowable Ranges";
+            this.Ranges.UseVisualStyleBackColor = true;
             // 
-            // allowIncrease
+            // lblTolerance
             // 
-            this.allowIncrease.HeaderText = "Allowable Increase";
-            this.allowIncrease.Name = "allowIncrease";
-            this.allowIncrease.ReadOnly = true;
-            this.allowIncrease.Width = 111;
+            this.lblTolerance.AutoSize = true;
+            this.lblTolerance.Location = new System.Drawing.Point(381, 299);
+            this.lblTolerance.Name = "lblTolerance";
+            this.lblTolerance.Size = new System.Drawing.Size(84, 13);
+            this.lblTolerance.TabIndex = 2;
+            this.lblTolerance.Text = "Tolerance (eps):";
             // 
             // grpRhsRanges
             // 
@@ -527,23 +469,73 @@
             0,
             393216});
             // 
-            // lblTolerance
+            // grpObjRanges
             // 
-            this.lblTolerance.AutoSize = true;
-            this.lblTolerance.Location = new System.Drawing.Point(381, 299);
-            this.lblTolerance.Name = "lblTolerance";
-            this.lblTolerance.Size = new System.Drawing.Size(84, 13);
-            this.lblTolerance.TabIndex = 2;
-            this.lblTolerance.Text = "Tolerance (eps):";
+            this.grpObjRanges.Controls.Add(this.gridObjRanges);
+            this.grpObjRanges.Location = new System.Drawing.Point(3, 18);
+            this.grpObjRanges.Name = "grpObjRanges";
+            this.grpObjRanges.Size = new System.Drawing.Size(467, 268);
+            this.grpObjRanges.TabIndex = 0;
+            this.grpObjRanges.TabStop = false;
+            this.grpObjRanges.Text = "Objective Coefficient Ranges";
             // 
-            // txtReportPreview
+            // gridObjRanges
             // 
-            this.txtReportPreview.Location = new System.Drawing.Point(77, 23);
-            this.txtReportPreview.Name = "txtReportPreview";
-            this.txtReportPreview.ReadOnly = true;
-            this.txtReportPreview.Size = new System.Drawing.Size(778, 217);
-            this.txtReportPreview.TabIndex = 0;
-            this.txtReportPreview.Text = "";
+            this.gridObjRanges.AllowUserToAddRows = false;
+            this.gridObjRanges.AllowUserToDeleteRows = false;
+            this.gridObjRanges.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.gridObjRanges.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gridObjRanges.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.variableRange,
+            this.cj,
+            this.allowDecrease,
+            this.allowIncrease});
+            this.gridObjRanges.Location = new System.Drawing.Point(8, 20);
+            this.gridObjRanges.Name = "gridObjRanges";
+            this.gridObjRanges.ReadOnly = true;
+            this.gridObjRanges.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.gridObjRanges.Size = new System.Drawing.Size(448, 186);
+            this.gridObjRanges.TabIndex = 0;
+            this.gridObjRanges.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridObjRanges_CellContentClick);
+            // 
+            // variableRange
+            // 
+            this.variableRange.HeaderText = "Variable";
+            this.variableRange.Name = "variableRange";
+            this.variableRange.ReadOnly = true;
+            this.variableRange.Width = 70;
+            // 
+            // cj
+            // 
+            this.cj.HeaderText = "c_j";
+            this.cj.Name = "cj";
+            this.cj.ReadOnly = true;
+            this.cj.Width = 46;
+            // 
+            // allowDecrease
+            // 
+            this.allowDecrease.HeaderText = "Allowable Decrease";
+            this.allowDecrease.Name = "allowDecrease";
+            this.allowDecrease.ReadOnly = true;
+            this.allowDecrease.Width = 115;
+            // 
+            // allowIncrease
+            // 
+            this.allowIncrease.HeaderText = "Allowable Increase";
+            this.allowIncrease.Name = "allowIncrease";
+            this.allowIncrease.ReadOnly = true;
+            this.allowIncrease.Width = 111;
+            // 
+            // Report
+            // 
+            this.Report.Controls.Add(this.btnCopyReport);
+            this.Report.Controls.Add(this.txtReportPreview);
+            this.Report.Location = new System.Drawing.Point(4, 25);
+            this.Report.Name = "Report";
+            this.Report.Size = new System.Drawing.Size(950, 350);
+            this.Report.TabIndex = 3;
+            this.Report.Text = "Report";
+            this.Report.UseVisualStyleBackColor = true;
             // 
             // btnCopyReport
             // 
@@ -553,6 +545,15 @@
             this.btnCopyReport.TabIndex = 1;
             this.btnCopyReport.Text = "Copy Report";
             this.btnCopyReport.UseVisualStyleBackColor = true;
+            // 
+            // txtReportPreview
+            // 
+            this.txtReportPreview.Location = new System.Drawing.Point(77, 23);
+            this.txtReportPreview.Name = "txtReportPreview";
+            this.txtReportPreview.ReadOnly = true;
+            this.txtReportPreview.Size = new System.Drawing.Size(778, 217);
+            this.txtReportPreview.TabIndex = 0;
+            this.txtReportPreview.Text = "";
             // 
             // toolTip1
             // 
@@ -580,23 +581,23 @@
             this.Load += new System.EventHandler(this.frmSensitivity_Load);
             this.tabMain.ResumeLayout(false);
             this.Overview.ResumeLayout(false);
-            this.ShadowPricesReducedCosts.ResumeLayout(false);
-            this.Ranges.ResumeLayout(false);
-            this.Ranges.PerformLayout();
-            this.Report.ResumeLayout(false);
-            this.grpPrimal.ResumeLayout(false);
-            this.grpPrimal.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.gridPrimalTableau)).EndInit();
             this.grpDual.ResumeLayout(false);
             this.grpDual.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gridDualTableau)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.gridShadowPrices)).EndInit();
+            this.grpPrimal.ResumeLayout(false);
+            this.grpPrimal.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gridPrimalTableau)).EndInit();
+            this.ShadowPricesReducedCosts.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridReducedCosts)).EndInit();
-            this.grpObjRanges.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.gridObjRanges)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.gridShadowPrices)).EndInit();
+            this.Ranges.ResumeLayout(false);
+            this.Ranges.PerformLayout();
             this.grpRhsRanges.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gridRhsRanges)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numTolerance)).EndInit();
+            this.grpObjRanges.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gridObjRanges)).EndInit();
+            this.Report.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
