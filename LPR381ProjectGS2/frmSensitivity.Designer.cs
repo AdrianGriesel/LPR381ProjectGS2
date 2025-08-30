@@ -39,6 +39,7 @@
             this.tabMain = new System.Windows.Forms.TabControl();
             this.Overview = new System.Windows.Forms.TabPage();
             this.grpDual = new System.Windows.Forms.GroupBox();
+            this.lstDualIters = new System.Windows.Forms.ListBox();
             this.lblDualObj = new System.Windows.Forms.Label();
             this.gridDualTableau = new System.Windows.Forms.DataGridView();
             this.lblDualityCheck = new System.Windows.Forms.Label();
@@ -78,7 +79,6 @@
             this.btnCopyReport = new System.Windows.Forms.Button();
             this.txtReportPreview = new System.Windows.Forms.RichTextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.lstDualIters = new System.Windows.Forms.ListBox();
             this.tabMain.SuspendLayout();
             this.Overview.SuspendLayout();
             this.grpDual.SuspendLayout();
@@ -168,7 +168,7 @@
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(36, 316);
+            this.lblStatus.Location = new System.Drawing.Point(119, 317);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(40, 13);
             this.lblStatus.TabIndex = 6;
@@ -213,6 +213,15 @@
             this.grpDual.TabIndex = 4;
             this.grpDual.TabStop = false;
             this.grpDual.Text = "Dual Simplex";
+            // 
+            // lstDualIters
+            // 
+            this.lstDualIters.FormattingEnabled = true;
+            this.lstDualIters.Location = new System.Drawing.Point(208, 19);
+            this.lstDualIters.Name = "lstDualIters";
+            this.lstDualIters.Size = new System.Drawing.Size(92, 95);
+            this.lstDualIters.TabIndex = 7;
+            this.lstDualIters.SelectedIndexChanged += new System.EventHandler(this.lstDualIters_SelectedIndexChanged);
             // 
             // lblDualObj
             // 
@@ -604,15 +613,6 @@
             this.toolTip1.InitialDelay = 300;
             this.toolTip1.ReshowDelay = 100;
             this.toolTip1.ShowAlways = true;
-            // 
-            // lstDualIters
-            // 
-            this.lstDualIters.FormattingEnabled = true;
-            this.lstDualIters.Location = new System.Drawing.Point(208, 19);
-            this.lstDualIters.Name = "lstDualIters";
-            this.lstDualIters.Size = new System.Drawing.Size(92, 95);
-            this.lstDualIters.TabIndex = 7;
-            this.lstDualIters.SelectedIndexChanged += new System.EventHandler(this.lstDualIters_SelectedIndexChanged);
             // 
             // frmSensitivity
             // 

@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using static LinearProgrammingSolver.LPInputParser;
 using SimplexStatus = LPR381ProjectGS2.Domain.Models.SimplexStatus;
 
 namespace LPR381ProjectGS2.Presentation
@@ -141,7 +142,7 @@ namespace LPR381ProjectGS2.Presentation
 
         private void btnBuildDual_Click(object sender, EventArgs e)
         {
-            _dualModel = DualBuilder.BuildDual(_primalModel);
+            _dualModel = DualBuilder.BuildDualForSolver(_primalModel);
 
             if (_dualModel == null)
             {
@@ -157,24 +158,16 @@ namespace LPR381ProjectGS2.Presentation
 
         private void btnSolveDual_Click(object sender, EventArgs e)
         {
-            if (_dualModel == null) return;
+            if (_primalResult == null) return;
 
-            // Ensure the dual model is in a solver-compatible form
-            var dualForSolver = LPStandardizer.ConvertToMaxForm(_dualModel); // convert to max <= x>=0
+            // build dual ready for solver
+            _dualModel = DualBuilder.BuildDualForSolver(_primalModel);
+
             var solver = new PrimalSimplexSolver();
-            _dualResult = solver.Solve(dualForSolver);
+            _dualResult = solver.Solve(_dualModel);
 
             lstDualIters.Items.Clear();
 
-            if (_dualResult.Iterations == null || !_dualResult.Iterations.Any())
-            {
-                MessageBox.Show("Dual solver did not produce any iterations. Check the dual LP form.",
-                                "Solver Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                ClearGrid(gridDualTableau);
-                return;
-            }
-
-            // Populate the dual iteration list
             for (int i = 0; i < _dualResult.Iterations.Count; i++)
             {
                 var s = _dualResult.Iterations[i];
@@ -184,11 +177,13 @@ namespace LPR381ProjectGS2.Presentation
                 lstDualIters.Items.Add(label);
             }
 
-            // Show last iteration in the grid
-            lstDualIters.SelectedIndex = _dualResult.Iterations.Count - 1;
-            FillGridWithSnapshot(gridDualTableau, _dualResult.Iterations.Last());
+            if (_dualResult.Iterations.Any())
+            {
+                lstDualIters.SelectedIndex = _dualResult.Iterations.Count - 1;
+                FillGridWithSnapshot(gridDualTableau, _dualResult.Iterations.Last());
+                gridDualTableau.Refresh();
+            }
 
-            // Compute dual objective from primal for display
             double dualTrue = ComputeDualObjectiveFromPrimal();
             lblDualObj.Text = $"w* (dual) = {dualTrue:0.000}";
 
@@ -198,6 +193,7 @@ namespace LPR381ProjectGS2.Presentation
 
             lblStatus.Text = "dual solved and duality checked.";
         }
+
 
 
         private void btnAnalyze_Click(object sender, EventArgs e)
@@ -402,17 +398,73 @@ namespace LPR381ProjectGS2.Presentation
 
         private void BuildReportPreview()
         {
-            if (_report == null) return;
+            if (_report == null)
+            {
+                txtReportPreview.Clear();
+                txtReportPreview.AppendText("No sensitivity report available.\n");
+                return;
+            }
 
             txtReportPreview.Clear();
+
+            // --- Objective values ---
             txtReportPreview.AppendText($"z* (primal): {_report.PrimalObjective:0.000}\n");
             if (_report.DualObjective.HasValue)
                 txtReportPreview.AppendText($"w* (dual): {_report.DualObjective.Value:0.000}\n");
-            txtReportPreview.AppendText($"weak duality: {(_report.WeakDualityHolds ? "holds" : "fails")}\n");
-            txtReportPreview.AppendText($"strong duality: {(_report.StrongDualityHolds ? "holds" : "not verified")}\n");
-            if (!string.IsNullOrWhiteSpace(_report.Notes))
-                txtReportPreview.AppendText($"notes: {_report.Notes}\n");
+
+            // --- Solver status ---
+            txtReportPreview.AppendText($"Primal status: {_primalResult?.Status}\n");
+            txtReportPreview.AppendText($"Dual status: {_dualResult?.Status}\n");
+
+            // --- Simplex iterations ---
+            txtReportPreview.AppendText($"Primal iterations: {_primalResult?.Iterations.Count ?? 0}\n");
+            txtReportPreview.AppendText($"Dual iterations: {_dualResult?.Iterations.Count ?? 0}\n");
+
+            txtReportPreview.AppendText(new string('-', 50) + "\n");
+
+            // --- Weak/strong duality ---
+            txtReportPreview.AppendText($"Weak duality: {(_report.WeakDualityHolds ? "holds" : "fails")}\n");
+            txtReportPreview.AppendText($"Strong duality: {(_report.StrongDualityHolds ? "holds" : "not verified")}\n");
+
+            txtReportPreview.AppendText(new string('-', 50) + "\n");
+
+            // --- Basic variables (from last primal iteration) ---
+            if (_primalResult?.Iterations.Any() == true)
+            {
+                var last = _primalResult.Iterations.Last();
+                txtReportPreview.AppendText("Primal basic variables:\n");
+                for (int i = 0; i < last.RowLabels.Length - 1; i++)
+                {
+                    double val = last.Matrix[i, last.Matrix.GetLength(1) - 1];
+                    txtReportPreview.AppendText($"  {last.RowLabels[i]} = {val:0.000}\n");
+                }
+                txtReportPreview.AppendText(new string('-', 50) + "\n");
+            }
+
+            // --- Shadow prices ---
+            if (_report.ShadowPrices != null && _report.ShadowPrices.Count > 0)
+            {
+                txtReportPreview.AppendText("Shadow prices:\n");
+                foreach (var kv in _report.ShadowPrices)
+                    txtReportPreview.AppendText($"  {kv.Key}: {kv.Value:0.000}\n");
+                txtReportPreview.AppendText(new string('-', 50) + "\n");
+            }
+
+            // --- Reduced costs ---
+            if (_report.ReducedCosts != null && _report.ReducedCosts.Count > 0)
+            {
+                txtReportPreview.AppendText("Reduced costs:\n");
+                foreach (var kv in _report.ReducedCosts)
+                {
+                    string basic = kv.Value.isBasic ? "(basic)" : "";
+                    txtReportPreview.AppendText($"  {kv.Key}: {kv.Value.value:0.000} {basic}\n");
+                }
+                txtReportPreview.AppendText(new string('-', 50) + "\n");
+            }
         }
+
+    // --- Objective coefficient range
+
 
         private double ComputeDualObjectiveFromPrimal()
         {
@@ -456,7 +508,7 @@ namespace LPR381ProjectGS2.Presentation
             g.Rows.Clear();
         }
 
-        private void FillGridWithSnapshot(DataGridView grid, TableauSnapshot snap)
+        private void FillGridWithSnapshot(DataGridView grid, TableauSnapshot snap, LPModel model = null)
         {
             if (grid == null || snap == null || snap.Matrix == null) return;
 
@@ -466,11 +518,24 @@ namespace LPR381ProjectGS2.Presentation
             int rows = snap.Matrix.GetLength(0);
             int cols = snap.Matrix.GetLength(1);
 
-            // Ensure we have column labels
-            string[] colLabels = snap.ColumnLabels ?? Enumerable.Range(0, cols).Select(i => "c" + i).ToArray();
+            // Use snapshot column labels first; fallback to model variable names; finally, default c0, c1...
+            string[] colLabels;
+            if (snap.ColumnLabels != null)
+            {
+                colLabels = snap.ColumnLabels;
+            }
+            else if (model != null && model.VariableNames != null && model.VariableNames.Count == cols)
+            {
+                colLabels = model.VariableNames.ToArray();
+            }
+            else
+            {
+                colLabels = Enumerable.Range(0, cols).Select(i => "c" + i).ToArray();
+            }
+
             string[] rowLabels = snap.RowLabels ?? Enumerable.Range(0, rows).Select(i => "r" + i).ToArray();
 
-            // Build columns if needed
+            // Build columns
             if (grid.Columns.Count != cols)
             {
                 grid.Columns.Clear();
@@ -502,6 +567,8 @@ namespace LPR381ProjectGS2.Presentation
             grid.ResumeLayout();
             grid.Refresh();
         }
+
+
 
         // ===== Updated Selection Helpers =====
 

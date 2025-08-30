@@ -23,10 +23,14 @@ namespace LinearProgrammingSolver
             Integer,        // int
             Binary          // bin
         }
+        
+        
 
         // LP model class
         public class LPModel
         {
+            public List<string> VariableNames { get; set; } = new List<string>();
+            public List<string> ConstraintNames { get; set; } = new List<string>();
             public bool IsMaximization { get; set; }  // true if maximization problem
             public List<double> ObjectiveCoefficients { get; set; } = new List<double>();
             public List<Constraint> Constraints { get; set; } = new List<Constraint>();
@@ -205,5 +209,7 @@ namespace LinearProgrammingSolver
             }
             return true;
         }
+        
+
     }
 }

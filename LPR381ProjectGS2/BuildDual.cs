@@ -1,56 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static LinearProgrammingSolver.LPInputParser;
 
 namespace LPR381ProjectGS2.Domain.Analysis
 {
-
-    // returns a solver-compatible dual:
-    // max ( -b^T y )  s.t.  ( -A^T ) y <= ( -c ),  y >= 0
-    // this fits the primal solver which expects MAX with <= only
-
     internal class BuildDual
     {
         public static LPModel DualBuild(LPModel primal)
         {
             if (primal == null) return null;
-            // for now support the classroom case: primal is max, <=, x >= 0
+
+            // Only supports classroom case: max, all <=, all x >= 0
             if (!primal.IsMaximization) return null;
             if (primal.Constraints.Exists(c => c.Type != ConstraintType.LessOrEqual)) return null;
             if (primal.SignRestrictions.Exists(v => v != VariableType.Positive)) return null;
 
-            int m = primal.Constraints.Count;      // primal rows -> dual variables
+            int m = primal.Constraints.Count;      // primal rows -> dual vars
             int n = primal.NumberOfVariables;      // primal cols -> dual constraints
 
             var dual = new LPModel
             {
-                IsMaximization = true,             // we flip min to max by negating objective
+                IsMaximization = true,             // dual is max
                 NumberOfVariables = m
             };
 
-            // objective: -b (negate primal rhs)
+            // Assign variable names y1..ym for dual
+            dual.VariableNames = Enumerable.Range(1, m).Select(i => "y" + i).ToList();
+
+            // Assign constraint names c1..cn for dual
+            dual.ConstraintNames = Enumerable.Range(1, n).Select(i => "c" + i).ToList();
+
+            // Objective: -b (negate primal RHS)
             for (int i = 0; i < m; i++)
                 dual.ObjectiveCoefficients.Add(-primal.Constraints[i].RightHandSide);
 
-            // constraints: (-A^T) y <= (-c)
+            // Constraints: (-A^T) y <= -c
             for (int j = 0; j < n; j++)
             {
                 var row = new Constraint();
 
-                // coefficients are the negated column j of A
                 for (int i = 0; i < m; i++)
                     row.Coefficients.Add(-primal.Constraints[i].Coefficients[j]);
 
                 row.Type = ConstraintType.LessOrEqual;
-                row.RightHandSide = -primal.ObjectiveCoefficients[j]; // -c_j
+                row.RightHandSide = -primal.ObjectiveCoefficients[j];
 
                 dual.Constraints.Add(row);
             }
 
-            // y >= 0 because primal has <= constraints
+            // y >= 0
             for (int i = 0; i < m; i++)
                 dual.SignRestrictions.Add(VariableType.Positive);
 
