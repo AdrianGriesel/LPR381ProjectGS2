@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using LPR381ProjectGS2.Presentation;
 
 namespace LPR381ProjectGS2
 {
@@ -29,6 +30,13 @@ namespace LPR381ProjectGS2
             frmPrimal frmPrimal = new frmPrimal();
             frmPrimal.ShowDialog();
 
+        }
+
+        private void btnSensitivityAnalysis_Click(object sender, EventArgs e)
+        {
+            frmSensitivity frmSensitivity = new frmSensitivity();
+
+            frmSensitivity.ShowDialog();
         }
 
         private void btnKnapsackBnb_Click(object sender, EventArgs e)
@@ -85,9 +93,14 @@ namespace LPR381ProjectGS2
             frmCuttingPlane.ShowDialog();
         }
 
+
+        private void btnSensitvityAnalysis_Click(object sender, EventArgs e)
+        {
+            frmSensitivity frmSensitivity = new frmSensitivity();
+            frmSensitivity.ShowDialog();
+        }
         private void label1_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static LinearProgrammingSolver.LPInputParser;
 
-namespace LPR381ProjectGS2
+namespace LPR381ProjectGS2.Domain.Models
 {
     public enum SimplexStatus
     {

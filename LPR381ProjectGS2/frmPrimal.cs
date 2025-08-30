@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using static LinearProgrammingSolver.LPInputParser;
+using LPR381ProjectGS2.Domain.Algorithms;
+using LPR381ProjectGS2.Domain.Models;
 
 namespace LPR381ProjectGS2
 {
+
     public partial class frmPrimal : Form
     {
         private SimplexResult _result;
@@ -126,7 +129,7 @@ namespace LPR381ProjectGS2
                 return;
             }
 
-            
+
             using (var sfd = new SaveFileDialog
             {
                 Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",

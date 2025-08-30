@@ -4,17 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LPR381ProjectGS2
+namespace LPR381ProjectGS2.Domain.Models
 {
     public sealed class TableauSnapshot
     {
 
+            public double[,] Matrix { get; set; }
+            public string[] RowLabels { get; set; }
+            public string[] ColumnLabels { get; set; }
 
-        public double[,] Matrix { get; private set; } = new double[0, 0];
-        public string[] ColumnLabels { get; private set; } = new string[0];
-        public string[] RowLabels { get; private set; } = new string[0];
-        public int? EnteringColumn { get; private set; }
-        public int? LeavingRow { get; private set; }
+            // Add this
+            public List<string> VariableNames { get; set; } = new List<string>();
+
+            public int IterationNumber { get; set; }
+            public int? EnteringColumn { get; set; }
+            public int? LeavingRow { get; set; }
+        
+
 
         public static TableauSnapshot From(
             double[,] Matrix,

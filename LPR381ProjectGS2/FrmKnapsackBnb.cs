@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LPR381ProjectGS2.Domain.Algorithms;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
