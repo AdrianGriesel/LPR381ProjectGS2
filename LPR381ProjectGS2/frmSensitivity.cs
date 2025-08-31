@@ -64,6 +64,7 @@ namespace LPR381ProjectGS2.Presentation
                 if (ofd.ShowDialog(this) != DialogResult.OK) return;
 
                 _primalModel = LPInputParser.ParseInputFile(ofd.FileName);
+                _primalModel.NumberOfVariables = _primalModel.ObjectiveCoefficients?.Count ?? 0;
 
                 _primalResult = null;
                 _dualModel = null;
@@ -125,7 +126,7 @@ namespace LPR381ProjectGS2.Presentation
                 lstPrimalIters.SelectedIndex = _primalResult.Iterations.Count - 1;
 
             if (_primalResult.Iterations.Any())
-                FillGridWithSnapshot(gridPrimalTableau, _primalResult.Iterations.Last());
+                FillGridWithSnapshot(gridPrimalTableau, _primalResult.Iterations.Last(), _primalModel);
 
             lblPrimalObj.Text = $"z* (primal) = {_primalResult.ObjectiveValue:0.000}";
             lblStatus.Text = $"primal status: {_primalResult.Status}";
@@ -180,7 +181,7 @@ namespace LPR381ProjectGS2.Presentation
             if (_dualResult.Iterations.Any())
             {
                 lstDualIters.SelectedIndex = _dualResult.Iterations.Count - 1;
-                FillGridWithSnapshot(gridDualTableau, _dualResult.Iterations.Last());
+                FillGridWithSnapshot(gridDualTableau, _dualResult.Iterations.Last(), _dualModel);
                 gridDualTableau.Refresh();
             }
 
@@ -227,6 +228,7 @@ namespace LPR381ProjectGS2.Presentation
             if (idx < 0) return;
 
             _primalModel.ObjectiveCoefficients[idx] = newValue;
+            _primalModel.NumberOfVariables = _primalModel.ObjectiveCoefficients.Count;
 
             var solver = new PrimalSimplexSolver();
             _primalResult = solver.Solve(_primalModel);
@@ -260,15 +262,20 @@ namespace LPR381ProjectGS2.Presentation
             // Add new variable with 0 coefficient
             _primalModel.ObjectiveCoefficients.Add(0.0);
 
+            // Update NumberOfVariables so other code sees the new variable
+            _primalModel.NumberOfVariables = _primalModel.ObjectiveCoefficients.Count;
+
             // Add 0 coefficients to all existing constraints
             foreach (var c in _primalModel.Constraints)
                 c.Coefficients.Add(0.0);
 
+            // Invalidate any previously built dual so it will be rebuilt later
+            _dualModel = null;
+            _dualResult = null;
+
             // Solve the updated model
             var solver = new PrimalSimplexSolver();
             _primalResult = solver.Solve(_primalModel);
-            if (_dualModel != null)
-                _dualResult = solver.Solve(_dualModel);
 
             // Recompute the sensitivity report
             RecomputeSensitivityReport();
@@ -277,7 +284,8 @@ namespace LPR381ProjectGS2.Presentation
             UpdateAfterChange();
 
             lblStatus.Text = $"Added new activity {newVarName}. Solution updated.";
-        }  
+        }
+
 
         private void AddNewConstraint()
         {
@@ -289,6 +297,12 @@ namespace LPR381ProjectGS2.Presentation
                 Type = LinearProgrammingSolver.LPInputParser.ConstraintType.LessOrEqual
             };
             _primalModel.Constraints.Add(newConstr);
+            // ensure #vars still correct
+            _primalModel.NumberOfVariables = _primalModel.ObjectiveCoefficients?.Count ?? 0;
+
+            // invalidate dual
+            _dualModel = null;
+            _dualResult = null;
 
             var solver = new PrimalSimplexSolver();
             _primalResult = solver.Solve(_primalModel);
@@ -524,9 +538,9 @@ namespace LPR381ProjectGS2.Presentation
             {
                 colLabels = snap.ColumnLabels;
             }
-            else if (model != null && model.VariableNames != null && model.VariableNames.Count == cols)
+            else if (model != null && model.ObjectiveCoefficients != null && model.ObjectiveCoefficients.Count == cols)
             {
-                colLabels = model.VariableNames.ToArray();
+                colLabels = Enumerable.Range(1, cols).Select(i => "x" + i).ToArray();
             }
             else
             {
@@ -619,7 +633,7 @@ namespace LPR381ProjectGS2.Presentation
             ApplyVariableChange(varName, newValue);
             RecomputeSensitivityReport();
 
-            lblStatus.Text = $"Variable {varName} objective coefficient changed to {newValue}. Solution updated.";
+            lblStatus1.Text = $"Variable {varName} objective coefficient changed to {newValue}. Solution updated.";
         }
 
         private void btnAddActivity_Click(object sender, EventArgs e)
@@ -627,7 +641,7 @@ namespace LPR381ProjectGS2.Presentation
             AddNewActivity();
             RecomputeSensitivityReport();
 
-            lblStatus.Text = $"Added new activity. Solution updated.";
+            lblStatus1.Text = $"Added new activity. Solution updated.";
 
         }
 
@@ -636,7 +650,7 @@ namespace LPR381ProjectGS2.Presentation
             AddNewConstraint();
             RecomputeSensitivityReport();
 
-            lblStatus.Text = $"Added new constraint. Solution updated.";
+            lblStatus1.Text = $"Added new constraint. Solution updated.";
         }
 
         private void btnApplyRhsChange_Click(object sender, EventArgs e)
@@ -653,7 +667,7 @@ namespace LPR381ProjectGS2.Presentation
 
             RecomputeSensitivityReport();
 
-            lblStatus.Text = $"Constraint {constrName} RHS changed to {newRhs}. Solution updated.";
+            lblStatus1.Text = $"Constraint {constrName} RHS changed to {newRhs}. Solution updated.";
         }
 
         private void btnCopyReport_Click(object sender, EventArgs e)
@@ -710,6 +724,11 @@ namespace LPR381ProjectGS2.Presentation
         }
 
         private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void gridPrimalTableau_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
