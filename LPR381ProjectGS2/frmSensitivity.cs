@@ -693,5 +693,25 @@ namespace LPR381ProjectGS2.Presentation
                 lblStatus.Text = $"Displaying iteration {iterIndex + 1}";
             }
         }
+
+        private void lblStatus_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void grpPrimal_Enter(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblPrimalObj_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
