@@ -80,12 +80,6 @@
     <Compile Include="frmSensitivity.Designer.cs">
       <DependentUpon>frmSensitivity.cs</DependentUpon>
     </Compile>
-    <Compile Include="frmSimplex.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmSimplex.Designer.cs">
-      <DependentUpon>frmSimplex.cs</DependentUpon>
-    </Compile>
     <Compile Include="KnapSackSolver.cs" />
     <Compile Include="LPInputParser.cs" />
     <Compile Include="LPStandardizer.cs" />
@@ -118,9 +112,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmSensitivity.resx">
       <DependentUpon>frmSensitivity.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmSimplex.resx">
-      <DependentUpon>frmSimplex.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Main Form.resx">
       <DependentUpon>Main Form.cs</DependentUpon>

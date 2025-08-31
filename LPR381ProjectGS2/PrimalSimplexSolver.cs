@@ -52,8 +52,8 @@ namespace LPR381ProjectGS2.Domain.Algorithms
                         ? "no positive reduced costs in z row."
                         : "no negative reduced costs in z row.";
 
-                    (res.ObjectiveValue, res.Primal) =
-                        ExtractSolution(T, colLabels, rowLabels, model.NumberOfVariables, model.IsMaximization);
+                    (res.ObjectiveValue, res.Primal) = ExtractSolution(T, colLabels, rowLabels, model.NumberOfVariables, model);
+
                     break;
                 }
 
@@ -222,39 +222,46 @@ namespace LPR381ProjectGS2.Domain.Algorithms
         }
 
         // reads x and z from final tableau and fixes z sign for max case
+        // read x from the final tableau using row labels,
+        // then compute z = c^T x from the original objective
         private (double z, double[] x) ExtractSolution(
-            double[,] T, string[] colLabels, string[] rowLabels, int nVars, bool isMax)
+            double[,] T,
+            string[] colLabels,
+            string[] rowLabels,
+            int nVars,
+            LPModel model) // pass model so we can use original c
         {
             int rows = T.GetLength(0);
             int cols = T.GetLength(1);
-            int rhs = cols - 1;
-            int zRow = rows - 1;
+            int rhsCol = cols - 1;
 
             var x = new double[nVars];
 
-            // read basic x values from rhs using row labels
+            // collect basic variable values from rhs
             for (int i = 0; i < rowLabels.Length - 1; i++) // skip z row
             {
                 string lbl = rowLabels[i];
-                if (lbl.Length >= 2 && lbl[0] == 'x')
+                if (!string.IsNullOrEmpty(lbl) && lbl[0] == 'x')
                 {
-                    if (int.TryParse(lbl.Substring(1), out int k))
+                    int k;
+                    if (int.TryParse(lbl.Substring(1), out k))
                     {
                         int idx = k - 1;
                         if (idx >= 0 && idx < nVars)
-                            x[idx] = T[i, rhs];
+                            x[idx] = T[i, rhsCol];
                     }
                 }
             }
 
-            // with z-row = +c for max, rhs stores -z*
-            // with z-row = -c for min, rhs stores +z*
-            double zRhs = T[zRow, rhs];
-            double z = isMax ? -zRhs : zRhs;
+            // compute objective directly from input coefficients
+            double z = 0.0;
+            for (int j = 0; j < nVars; j++)
+                z += model.ObjectiveCoefficients[j] * x[j];
 
             return (z, x);
         }
-        
+
+
 
         // pretty print canonical form for logging
         private string PrettyCanonical(LPModel model, bool includeSlack)

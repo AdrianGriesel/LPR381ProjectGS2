@@ -46,10 +46,9 @@
             // btnOpen
             // 
             this.btnOpen.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnOpen.Location = new System.Drawing.Point(52, 484);
-            this.btnOpen.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnOpen.Location = new System.Drawing.Point(39, 393);
             this.btnOpen.Name = "btnOpen";
-            this.btnOpen.Size = new System.Drawing.Size(241, 62);
+            this.btnOpen.Size = new System.Drawing.Size(181, 50);
             this.btnOpen.TabIndex = 0;
             this.btnOpen.Text = "Open LP";
             this.btnOpen.UseVisualStyleBackColor = true;
@@ -58,10 +57,9 @@
             // btnSolve
             // 
             this.btnSolve.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSolve.Location = new System.Drawing.Point(332, 472);
-            this.btnSolve.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSolve.Location = new System.Drawing.Point(249, 384);
             this.btnSolve.Name = "btnSolve";
-            this.btnSolve.Size = new System.Drawing.Size(245, 62);
+            this.btnSolve.Size = new System.Drawing.Size(184, 50);
             this.btnSolve.TabIndex = 1;
             this.btnSolve.Text = "Solve (Primal)";
             this.btnSolve.UseVisualStyleBackColor = true;
@@ -70,10 +68,9 @@
             // btnExport
             // 
             this.btnExport.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnExport.Location = new System.Drawing.Point(634, 472);
-            this.btnExport.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnExport.Location = new System.Drawing.Point(462, 384);
             this.btnExport.Name = "btnExport";
-            this.btnExport.Size = new System.Drawing.Size(319, 62);
+            this.btnExport.Size = new System.Drawing.Size(239, 50);
             this.btnExport.TabIndex = 2;
             this.btnExport.Text = "Export Output";
             this.btnExport.UseVisualStyleBackColor = true;
@@ -83,10 +80,9 @@
             // 
             this.lblStatus.AutoSize = true;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblStatus.Location = new System.Drawing.Point(630, 3);
-            this.lblStatus.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblStatus.Location = new System.Drawing.Point(30, 353);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(69, 20);
+            this.lblStatus.Size = new System.Drawing.Size(59, 17);
             this.lblStatus.TabIndex = 3;
             this.lblStatus.Text = "Status:";
             // 
@@ -97,11 +93,10 @@
             this.lstIterations.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstIterations.FormattingEnabled = true;
             this.lstIterations.IntegralHeight = false;
-            this.lstIterations.ItemHeight = 20;
-            this.lstIterations.Location = new System.Drawing.Point(634, 27);
-            this.lstIterations.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstIterations.ItemHeight = 17;
+            this.lstIterations.Location = new System.Drawing.Point(463, 22);
             this.lstIterations.Name = "lstIterations";
-            this.lstIterations.Size = new System.Drawing.Size(319, 396);
+            this.lstIterations.Size = new System.Drawing.Size(240, 322);
             this.lstIterations.TabIndex = 4;
             this.lstIterations.SelectedIndexChanged += new System.EventHandler(this.lstIterations_SelectedIndexChanged);
             // 
@@ -110,24 +105,22 @@
             this.gridTableau.AllowUserToAddRows = false;
             this.gridTableau.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
             this.gridTableau.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridTableau.Location = new System.Drawing.Point(52, 39);
-            this.gridTableau.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gridTableau.Location = new System.Drawing.Point(39, 32);
             this.gridTableau.Name = "gridTableau";
             this.gridTableau.ReadOnly = true;
             this.gridTableau.RowHeadersVisible = false;
             this.gridTableau.RowHeadersWidth = 51;
-            this.gridTableau.Size = new System.Drawing.Size(537, 180);
+            this.gridTableau.Size = new System.Drawing.Size(403, 146);
             this.gridTableau.TabIndex = 5;
             this.gridTableau.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridTableau_CellContentClick);
             // 
             // gridOptimal
             // 
             this.gridOptimal.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.gridOptimal.Location = new System.Drawing.Point(52, 254);
-            this.gridOptimal.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.gridOptimal.Location = new System.Drawing.Point(39, 206);
             this.gridOptimal.Name = "gridOptimal";
             this.gridOptimal.RowHeadersWidth = 51;
-            this.gridOptimal.Size = new System.Drawing.Size(537, 181);
+            this.gridOptimal.Size = new System.Drawing.Size(403, 147);
             this.gridOptimal.TabIndex = 6;
             this.gridOptimal.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gridOptimal_CellContentClick);
             // 
@@ -135,10 +128,9 @@
             // 
             this.lblIterations.AutoSize = true;
             this.lblIterations.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblIterations.Location = new System.Drawing.Point(52, 15);
-            this.lblIterations.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblIterations.Location = new System.Drawing.Point(39, 12);
             this.lblIterations.Name = "lblIterations";
-            this.lblIterations.Size = new System.Drawing.Size(94, 20);
+            this.lblIterations.Size = new System.Drawing.Size(81, 17);
             this.lblIterations.TabIndex = 7;
             this.lblIterations.Text = "Iterations:";
             // 
@@ -146,10 +138,9 @@
             // 
             this.lblOptimal.AutoSize = true;
             this.lblOptimal.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblOptimal.Location = new System.Drawing.Point(52, 230);
-            this.lblOptimal.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblOptimal.Location = new System.Drawing.Point(39, 187);
             this.lblOptimal.Name = "lblOptimal";
-            this.lblOptimal.Size = new System.Drawing.Size(154, 20);
+            this.lblOptimal.Size = new System.Drawing.Size(132, 17);
             this.lblOptimal.TabIndex = 8;
             this.lblOptimal.Text = "Optimal Solution:";
             // 
@@ -160,24 +151,24 @@
             this.panel1.Controls.Add(this.btnExport);
             this.panel1.Controls.Add(this.btnSolve);
             this.panel1.Controls.Add(this.lblStatus);
-            this.panel1.Location = new System.Drawing.Point(12, 12);
+            this.panel1.Location = new System.Drawing.Point(9, 10);
+            this.panel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(991, 552);
+            this.panel1.Size = new System.Drawing.Size(743, 448);
             this.panel1.TabIndex = 15;
             // 
             // frmPrimal
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Menu;
-            this.ClientSize = new System.Drawing.Size(1015, 576);
+            this.ClientSize = new System.Drawing.Size(761, 468);
             this.Controls.Add(this.lblOptimal);
             this.Controls.Add(this.lblIterations);
             this.Controls.Add(this.gridOptimal);
             this.Controls.Add(this.gridTableau);
             this.Controls.Add(this.btnOpen);
             this.Controls.Add(this.panel1);
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "frmPrimal";
             this.Text = "Primal Simplex Solver";
             this.Load += new System.EventHandler(this.frmPrimal_Load);

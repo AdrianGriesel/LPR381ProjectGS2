@@ -40,6 +40,7 @@ namespace LPR381ProjectGS2
         }
 
         // flips only the Z row when displaying a max problem
+        // flips only the z-row RHS when displaying a max problem
         private static void DumpTableau(StringBuilder sb, TableauSnapshot snap, bool isMaximization)
         {
             // header
@@ -51,19 +52,21 @@ namespace LPR381ProjectGS2
             }
             sb.AppendLine();
 
+            int rhsCol = snap.ColumnLabels.Length - 1;
+
             // rows
             for (int i = 0; i < snap.RowLabels.Length; i++)
             {
                 bool isZ = string.Equals(snap.RowLabels[i], "z", StringComparison.OrdinalIgnoreCase);
-
                 sb.Append(snap.RowLabels[i]).Append('\t');
 
                 for (int j = 0; j < snap.ColumnLabels.Length; j++)
                 {
                     double val = snap.Matrix[i, j];
 
-                    // display flip only: for max problems, z-row stores -z*, so show +z*
-                    if (isMaximization && isZ) val = -val;
+                    // display flip only for the objective value cell (z-row, RHS)
+                    if (isMaximization && isZ && j == rhsCol)
+                        val = -val;
 
                     sb.Append(Rounder(val));
                     if (j < snap.ColumnLabels.Length - 1) sb.Append('\t');
@@ -71,6 +74,7 @@ namespace LPR381ProjectGS2
                 sb.AppendLine();
             }
         }
+
         // Rounds to 3 decimal places and ensures 3 decimal digits are always shown
         private static string Rounder(double value)
             => Math.Round(value, 3).ToString("0.000", CultureInfo.InvariantCulture);
