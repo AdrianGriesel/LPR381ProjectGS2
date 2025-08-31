@@ -20,8 +20,7 @@ namespace LPR381ProjectGS2
 
         private void btnPrimal_Click(object sender, EventArgs e)
         {
-            frmSimplex frmSimplex = new frmSimplex();
-            frmSimplex.ShowDialog();
+            
 
         }
 
